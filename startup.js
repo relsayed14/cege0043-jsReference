@@ -11,6 +11,4 @@ function startup() {
 		getPort();
 		trackAndCircle();
 	}, false);
-
-
 }
