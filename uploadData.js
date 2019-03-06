@@ -3,8 +3,8 @@ function startDataUpload () {
 	//extract form values (response values)
 	var name = document.getElementById("name").value;
 	var surname = document.getElementById("surname").value;
-	var moduleTitle = document.getElementById("moduleTitle").value;
-	var postString = "name="+name +"&surname="+surname+"&moduleTitle="+moduleTitle;
+	var module = document.getElementById("module").value;
+	var postString = "name="+name +"&surname="+surname+"&module="+module;
 	alert (postString);
 
 	// now get the checkbox values - separate them with a | so that they 
