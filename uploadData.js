@@ -48,7 +48,9 @@ var client;
 //function to make a request
 function processData(postString) {
 	client = new XMLHttpRequest();
-	client.open('POST','http://developer.cege.ucl.ac.uk:30272/reflectData',true);
+	postString = postString + "&port_id=" + httpPortNumber;
+	var url = 'http://developer.cege.ucl.ac.uk:' + httpportNumber + "/uploadData";
+	client.open('POST',url,true);
 	//notify the server of the data type
 	client.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 	client.onreadystatechange = dataUploaded;
