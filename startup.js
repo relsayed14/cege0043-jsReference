@@ -12,9 +12,9 @@ function trackAndCircle() {
 
 }
 
-function startup() {
+function quizstartup() {
 	document.addEventListener('DOMContentLoaded', function(){
 		getPort();
-		trackAndCircle();
+		// trackAndCircle();
 	}, false);
 }
