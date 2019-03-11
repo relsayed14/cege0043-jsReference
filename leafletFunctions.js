@@ -4,6 +4,20 @@ var client;
 var earthquakes;
 var mymap;
 
+// create a custom popup
+var popup = L.popup();
+
+	//create an event detector to wait for the user's click event and then use the popup to show them where they clicked
+	function onMapClick(e) {
+		popup
+		.setLatLng(e.latlng)
+		.setContent("You clicked the map at " + e.latlng.toString())
+		.openOn(mymap);
+		}
+
+		// now add the click event detector to the map
+		mymap.on('click',onMapClick);
+
 
 function addPointLinePoly() {
 	//add a point
