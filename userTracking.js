@@ -44,7 +44,7 @@ function getDistanceFromPoint(position) {
 
 	//returnt the distance in kilometres
 	var distance = calculateDistance(position.coords.latitude, position.coords.longitude,lat,lng,"K");
-	alert("You are within " + distance*100 + " m from point.")
+	alert("You are within " + distance + " m from point.")
 	document.getElementById("distancediv").innerHTML = "The distance between the user and the fixed point is " + distance + " km."
 	
 }
@@ -52,15 +52,18 @@ function getDistanceFromPoint(position) {
 
 // function to get distance from several points on the layer
 function getDistanceFromMultiplePoints(position) {
-	var minDistance = 100000000000; var closestQuake = "";
-	for(var i = 0; i < earthquakes.features.length; i++) { var obj = earthquakes.features[i];
+	var minDistance = 0.1; var closestQuiz = "";
+	for(var i = 0; i < quizzes.features.length; i++) { var obj = quizzes.features[i];
 		var distance = calculateDistance(position.coords.latitude,
-			position.coords.longitude,obj.geometry.coordinates[0], obj.geometry.coordinates[1], 'K'); if (distance < minDistance){
+			position.coords.longitude,obj.geometry.coordinates[0], obj.geometry.coordinates[1], 'K'); 
+		if (distance < minDistance){
 			minDistance = distance;
-			closestQuake = obj.properties.place;
+			closestQuiz = obj.properties.place;
 		}
 	}
-	alert("Earthquake: " + closestQuake + " is " + minDistance + " away");
+	alert("Closest quiz: " + closestQuake + " is " + minDistance + " away");
+
+	// pop up closest quiz
 }
 
 //code to get distance adapted from https://www.htmlgoodies.com/beyond/javascript/calculate-the-distance-between-two-points-inyour-web-apps.html
