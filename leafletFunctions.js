@@ -1,188 +1,178 @@
-function addPointLinePoly(){
-	alert("This will add a point, line and polygon.");
-	
-	// add a point
-	L.marker([51.524048, -0.139924]).addTo(mymap)
-	.bindPopup("<b>This is the Warren Street point.").openPopup();
-			
-	// add a line
-	var myLine = [
-    [51.5, -0.07],
-    [51.51, -0.08]
-	];
-	L.polyline(myLine,{color:'green'})
-	.addTo(mymap).bindPopup("I am a line.");
-	
-	// add a circle
-	L.circle([51.508, -0.11], 500,{
+// code to get the Earthquakes data using an XMLHttpRequest
+var client;
+var earthquakes;
+var busstops;
+var mymap;
+
+var earthquakelayer;
+ var busstoplayer;
+
+function addPointLinePoly() {
+	//add a point
+	L.marker([50.93,-6.29]).addTo(mymap);
+
+	//add a circle
+	L.circle([51.5,-0.09],50000, {
 		color:'red',
 		fillColor:'#f03',
 		fillOpacity: 0.5
-	}).addTo(mymap).bindPopup("I am a circle.");
-			
-	// add a polygon with 3 end points (i.e. a triangle)
-	var myPolygon = L.polygon([
-		[51.509, -0.08],
-		[51.503, -0.06],
-		[51.51,-0.047]
-	],{
-		color:'red',
-		fillColor:'#f03',
-		fillOpacity:0.5
-	}).addTo(mymap).bindPopup("I am a polygon.");
-}
-
-
-
-
-/// EXTRA CODE FROM PRACTICALS ///
-
-/* var client;
-var earthquakes;
-
-// create the code to get the Earthquakes data using an XMLHttpRequest
-function getEarthquakes(){
-	alert("This will get all the earthquakes.");
-	client = new XMLHttpRequest();
-	client.open('GET','https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson');
-	client.onreadystatechange = earthquakeResponse;
-	client.send()
-}
-
-// create the code to wait for the response from the data server, and process the response once it is received
-function earthquakeResponse(){
-	// this function listens out for the server to say that the data is ready (i.e. has state 4)
-	if (client.readyState == 4) {
-		//once daata is ready, process the data
-		var earthquakedata = client.responseText;
-		loadEarthquakelayer(earthquakedata);
-	}
-}
-
-// define a global variable to hold the layer so we can use it later on
-var earthquakelayer;
-		
-// convert the received data (which is text) into JSON format and add it to the map
-function loadEarthquakelayer(earthquakedata){
-	// convert text to JSON
-	var earthquakejson = JSON.parse(earthquakedata);
-	earthquakes = earthquakejson;
-			
-	// load geoJSON earthquake layer using custom markers
-	earthquakelayer = L.geoJSON(earthquakejson,
-	{
-		// use point to layer to create the points
-		pointToLayer: function(feature, latlng){
-			// look at properties of GeoJSON file to see EQ magnitude and use different marker depending on magnitude
-			if (feature.properties.mag > 1.75){
-				return L.marker(latlng, {icon: redMarker}).bindPopup("<b>"+
-				feature.properties.place+"</b>");
-			}
-					
-			else { 
-			return L.marker(latlng, {icon: pinkMarker}).bindPopup("<b>"+
-				feature.properties.place+"</b>");
-			}
-		},					
 	}).addTo(mymap);
-			
-	// change the map zoom so that all the data is shown
-	mymap.fitBounds(earthquakelayer.getBounds());
-}
- */
-/* var xhrFormData; // define global variable to process AJAX request to get formdata
-//var allForms;
-var formDataLayer; // global variable to hold formdata for later use
 
-// AJAX request function to load formdata
-function startFormDataLoad(){
-	xhrFormData = new XMLHttpRequest();
-	var url = "http://developer.cege.ucl.ac.uk:" + httpPortNumber + "/getFormData/" + httpPortNumber; //get url with non-hardcoded port number
-	xhrFormData.open("GET", url, true); // send to server
-	xhrFormData.onreadystatechange = processFormData;
-	try {
-		xhrFormData.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-	}
-	catch (e) {
-		// this only works in internet explorer
-	}
-	xhrFormData.send();
+
+	//add a polygon with 2 end points (i.e. a line)
+	var myLine = L.polygon([
+		[55.7,-21.81],
+		[58.51,13.32]
+		],{
+
+			color:'red',
+			fillColor:'#f06',
+			fillOpacity: '0.5'
+
+		}).addTo(mymap);
+
 }
 
-// AJAX request function to load London POI data
-function getPOIData(){
-	xhrFormData = new XMLHttpRequest();
-	var url = "http://developer.cege.ucl.ac.uk:" + httpPortNumber + "/getGeoJSON/london_poi/geom"; //get url with non-hardcoded port number
-	xhrFormData.open("GET", url, true); // send to server
-	xhrFormData.onreadystatechange = processFormData;
-	try {
-		xhrFormData.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-	}
-	catch (e) {
-		// this only works in internet explorer
-	}
-	xhrFormData.send();
-}
+// create the code to get the data using the XMLHttpRequest
+   	function getData(layername) {
+   		client = new XMLHttpRequest();
 
-// AJAX request function to load London highways data
-function getHighwaysData(){
-	xhrFormData = new XMLHttpRequest();
-	var url = "http://developer.cege.ucl.ac.uk:" + httpPortNumber + "/getGeoJSON/london_highway/geom"; //get url with non-hardcoded port number
-	xhrFormData.open("GET", url, true); // send to server
-	xhrFormData.onreadystatechange = processFormData;
-	try {
-		xhrFormData.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-	}
-	catch (e) {
-		// this only works in internet explorer
-	}
-	xhrFormData.send();
-}
+   		// dependig on the layer name, we get different URLs
+   			var url;
+   			if (layername == "earthquakes") {
+   				url =  "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson"
+   			} 
+   			if (layername == "busstops") {
+   				url = "https://developer.cege.ucl.ac.uk:31072/rev-week2/busstops.geojson"
+   			}
 
-// AJAX response function
-function processFormData(){
-	if (xhrFormData.readState < 4){
-		console.log('Loading...');
-	}
-	else if (xhrFormData.readyState === 4) { // 4 = response from server completely loaded
-		if (xhrFormData.status > 199 && xhrFormData.status < 300) {
-			var formData = xhrFormData.responseText;
-			loadFormDataLayer(formData);
+   			client.open('GET', url);
+   			client.onreadystatechange = dataResponse;
+   			client.send();
 		}
-	}
-}
 
-// convert the received data (which is text) into JSON format and add it to the map
-function loadFormDataLayer(formData){
-	// convert text to JSON
-	var formdatajson = JSON.parse(formData);
-	//allForms = formdatajson;
-			
-	// load geoJSON earthquake layer using custom markers
-	formDataLayer = L.geoJSON(formdatajson,
-	{
-		// use point to layer to create the red points
-		pointToLayer: function(feature, latlng){
-			// in this case, build an HTML DIV string using values in the data
-			var htmlString = "<DIV id='popup'" + feature.properties.id + "><h2>" + feature.properties.question_title + "</h2><br>";
-			htmlString = htmlString + "<h3>" + feature.properties.question_text + "</h3><br>";
-			htmlString = htmlString + "<input type='radio' name='answer' id='" + feature.properties.id + " 1'/>" + feature.properties.answer_1 + "<br>";
-			htmlString = htmlString + "<input type='radio' name='answer' id='" + feature.properties.id + " 2'/>" + feature.properties.answer_2 + "<br>";
-			htmlString = htmlString + "<input type='radio' name='answer' id='" + feature.properties.id + " 3'/>" + feature.properties.answer_3 + "<br>";
-			htmlString = htmlString + "<input type='radio' name='answer' id='" + feature.properties.id + " 4'/>" + feature.properties.answer_4 + "<br>";
-			htmlString = htmlString + "<button onclick='checkAnswer(" + feature.properties.id + "); return false;'> Submit Answer</button>";
-			
-			// include hidden element with the answer (in this case answer in the first choice
-			// use feature.properties.correct answer for the assignment
-			htmlString = htmlString + "<div id=answer" + feature.properties.id + " hidden>" + feature.properties.correct_answer + "</div>";
-			htmlString = htmlString + "</div>";
-			
-			return L.marker(latlng, {icon: BlueMarker}).bindPopup(htmlString);
-			}					
-	}).addTo(mymap);
-			
-	// change the map zoom so that all the data is shown
-	mymap.fitBounds(formDataLayer.getBounds());
-	closestFormPoint(); // get popup for closest point in formDataLayer
-}
- */
+// code to wait for the response from dta server, and process the response once received
+   		function dataResponse() {
+   			// this function listens out for the server to say that the data is ready - i.e. has state 4
+   			if(client.readyState == 4) {
+   				// once data is ready, process the data
+   				var geoJSONData = client.responseText;
+   				loadLayer(geoJSONData);
+   			}
+   		}
+
+ //convert the received data from text to JSON format and add to the map
+  function loadLayer(geoJSONData) {
+   	//which layer did we actually load?
+   	if(geoJSONData.indexOf("earthquake") > 0) {
+   		var loadingEarthquakes = true;
+   	}
+   	if (geoJSONData.indexOf("IIT_METHOD") >0) {
+   		var loadingBusstops = true;
+   	}
+
+   	//convert text to JSON
+   	var json = JSON.parse(geoJSONData);
+
+   	// add the JSON Layer onto the map
+   	if(loadingEarthquakes === true) {
+   		earthquakelayer = L.geoJson(json,  {
+		//use point to layer to create the points
+		pointToLayer: function(feature,latlng)
+		{
+			//look at the GeoJSON file - specifically at the properties,to see the earthquake magnitude and use a different marker depending on this value
+			// also incldue a pop up that shows the place value of the earthquakes
+			if(feature.properties.mag > 1.75) {
+				return L.marker(latlng, {icon:testMarkerRed}).bindPopup("<b>"+ feature.properties.place + "</b>");
+			} else {
+				// if mag =< 1.75
+				return L.marker(latlng, {icon:testMarkerPink}).bindPopup("<b>"+ feature.properties.place + "</b>");
+
+			}
+				},
+			}).addTo(mymap);
+   		mymap.fitBounds(earthquakelayer.getBounds());
+   	}
+		if(loadingBusstops === true) {
+   			busstoplayer = L.geoJson(json).addTo(mymap);
+   			mymap.fitBounds(busstoplayer.getBounds());
+   		}
+   	}
+
+// convert the received data (text) to JSON format 
+// add it to the map
+//function loadGeoJSONLayer(earthquakedata) {
+    // convert the text to JSON
+  //  var earthquakejson = JSON.parse(earthquakedata);
+    // earthquakes = earthquakejson;
+
+    // add the JSON layer onto the map - it will appear using the default icons
+   // geojsonLayer = L.geoJson(earthquakejson, {
+		//use point to layer to create the points
+	//	pointToLayer: function(feature,latlng)
+	//	{
+			//look at the GeoJSON file - specifically at the properties,to see the earthquake magnitude and use a different marker depending on this value
+			// also incldue a pop up that shows the place value of the earthquakes
+	//		if(feature.properties.mag > 1.75) {
+	//			return L.marker(latlng, {icon:testMarkerRed}).bindPopup("<b>"+ feature.properties.place + "</b>");
+	//		} else {
+				// if mag =< 1.75
+	//			return L.marker(latlng, {icon:testMarkerPink}).bindPopup("<b>"+ feature.properties.place + "</b>");
+
+	//		}
+	//			},
+	//		}).addTo(mymap);
+
+    // change the map zoom so that all the data is shown
+   // mymap.fitBounds(geojsonLayer.getBounds());
+//
+
+// Code to run when load Data button is clicked
+ 		function loadEarthquakeData() {
+			// shows an alert message - so that we know something is happening
+			alert("Loading Earthquakes");
+			layername = "earthquakes";
+			getData(layername);
+
+ 			}
+
+   	// Code to run when remove Data button is clicked
+		function removeEarthquakeData() {
+   		 	alert("Earthquake data will be removed");
+   		 	mymap.removeLayer(earthquakelayer);
+   		 }
+
+
+   	// Code to run to add bus stops layer - using button
+   	function loadBusstopsLayer() {
+   			alert("Loading bus stops");
+   			layername = "busstops";
+   			getData(layername);
+   		}
+
+
+       // Code to run to remove bus stops layer - using button
+   	function removeBusstopsLayer() {
+   			alert("Removing bus stops");
+   			mymap.removeLayer(busstoplayer);
+   		} 
+
+
+// Adding custom red maker
+var testMarkerRed = L.AwesomeMarkers.icon({
+	icon:'play',
+	markerColor:'red'
+});
+
+// Adding custom pink marker
+var testMarkerPink = L.AwesomeMarkers.icon({
+	icon:'play',
+	markerColor:'pink'
+});
+
+// Code to run when remove Data button is clicked
+function removeEarthquakeData() {
+   	alert("Earthquake data will be removed");
+   	mymap.removeLayer(earthquakelayer);
+ }
+
