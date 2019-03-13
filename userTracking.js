@@ -30,7 +30,7 @@ function getDistance() {
 	navigator.geolocation.getCurrentPosition(getDistanceFromMultiplePoints);
 }
 
-// calculate distance between user and only the selected point
+/* // calculate distance between user and only the selected point
 function getSetDistance() {
 	//getDistanceFromPoint is the function called once distance has been found
 	navigator.geolocation.getCurrentPosition(getDistanceFromPoint);
@@ -47,7 +47,7 @@ function getDistanceFromPoint(position) {
 	alert("You are within " + distance + " m from point.")
 	document.getElementById("distancediv").innerHTML = "The distance between the user and the fixed point is " + distance + " km."
 	
-}
+} */
 
 
 // function to get distance from several points on the layer
