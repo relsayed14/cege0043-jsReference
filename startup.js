@@ -1,8 +1,6 @@
-function trackAndCircle() {
-	trackLocation();
-	addPointLinePoly();
-	// getEarthquakes();
-
+// code to process the html files 
+function loadW3HTML(){
+	w3.includeHTML();
 }
 
 //wait for document to load, then start tracking user
