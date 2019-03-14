@@ -1,11 +1,12 @@
 var latitude;
 var longitude;
 
-//create a custom popup
+//create a custom popupp
 var popup = L.popup();
 
 // Code to obtain latitude and longitude of point on the map that the user clicked
 //create an event detector to wait for the user's click event and then use the popup to show them where they clicked
+// how do I call this from index.html?
 function onMapClick(e) {
 	popup.setLatLng(e.latlng);
 	// var latlngString =  e.latlng.toString();
@@ -33,16 +34,46 @@ function onMapClick(e) {
 
 // code to obtain data input by user (values), concatenate them in a strong
 function uploadQuestions() {
-	// include ways to handle errors here - after doing basic codes
-	
+	// include ways to handle errors here to make sure user chooses point first- after doing basic codes
+	// Note: user must type in ALL 4 CHOICES 
+
 	// values for chosen coordinates
 	var postString = "latitude=" + latitude + "&longitude=" + longitude;
 
+	// input data in question title
+	var question_title = document.getElementById("question_title").value;
+	// add error message if user leaves this blank
+	postString = postString + "&question_title=" + question_title;
+
+
+	// input data in question text
+	var question_text = document.getElementById("question_text").value;
+	// add error message if user leaves this blank
+	postString = postString + "&question_text=" + question_text;
+
+	// input data in answer choices 
+	var choice1 = document.getElementById("answer1").value;
+	// add error message if user leaves this blank
+	postString = postString + "&answer_1=" + choice1;
+	var choice2 = document.getElementById("answer2").value;
+	// add error message if user leaves this blank
+	postString = postString + "&answer_2=" + choice2;
+	var choice3 = document.getElementById("answer3").value;
+	// add error message if user leaves this blank
+	postString = postString + "&answer_3=" + choice3;
+	var choice1 = document.getElementById("answer4").value;
+	// add error message if user leaves this blank
+	postString = postString + "&answer_4=" + choice4;
+
+	// input data for the correct answer
+	// Note: the correct answer has to be an integer between 1-4
+	// Need to add a way to detect errors in this!
+	var correct_answer = document.getElementById("correct_answer").value;
+	postString = postString + "&=correct_answer=" + correct_answer;
+
+	processData(postString);
+
 }
-
-
-
-
 
 
 
