@@ -2,7 +2,7 @@
 var client; 
 
 // global variable to hold quiz points set by Questions App - should be added and/ or removed as desired
-var Quizlayer; 
+var quizlayer; 
 
 // AJAX request function to load quizpoints onto the map
 function loadQuizPoints(){
@@ -40,7 +40,7 @@ function loadQuizLayer(quizPoints){
 	var quizPointsJSON = JSON.parse(quizPoints);
 			
 	// load geoJSON quiz points layer using custom markers
-	Quizlayer = L.geoJSON(quizPointsJSON,
+	quizlayer = L.geoJSON(quizPointsJSON,
 	{
 		// use pointToLayer to create the marker
 		pointToLayer: function(feature, latlng){
@@ -66,7 +66,7 @@ function loadQuizLayer(quizPoints){
 	}).addTo(mymap);
 			
 	// change the map zoom so that all the data is shown
-	mymap.fitBounds(Quizlayer.getBounds());
+	mymap.fitBounds(quizlayer.getBounds());
 }
 	// dummy function to see if quiz submit button is working
 	function dummyFunction(){
