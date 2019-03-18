@@ -38,7 +38,7 @@ function processQuizPoints(){
 function loadQuizLayer(quizPoints){
 	// convert from text format to JSON
 	var quizPointsJSON = JSON.parse(quizPoints);
-			
+	console.log('now in loadQuizLayer');
 	// load geoJSON quiz points layer using custom markers
 	quizlayer = L.geoJSON(quizPointsJSON,
 	{
