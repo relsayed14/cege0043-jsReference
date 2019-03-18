@@ -12,20 +12,22 @@ function startup() {
 
 function questionStartup() {
 	alert("Welcome to the Questions App!");
-	document.addEventListener('DOMConentLoaded', function() {
+	document.addEventListener('DOMContentLoaded', function() {
+		// console.log('before port.')
 		getPort(); // obtain port number 
+		// console.log('before loading html.')
 		loadW3HTML(); // add HTML functionality
-		trackLocation(); // track the user's location
+		// console.log('startup function on.')
+		// getLocation(); // track the user's location
 	},false);
 }
 
 function quizStartup() {
 	alert("Welcome to the Quiz App!");
-	document.addEventListener('DOMConentLoaded', function() {
+	document.addEventListener('DOMContentLoaded', function() {
 		getPort(); // obtain port number 
 		loadW3HTML(); // add HTML functionality
 		trackLocation(); // track the user's location
-		// add code here to zoom into the area where user is to make it easier to choose quiz point?
 		// check code sources 
 
 	},false);
