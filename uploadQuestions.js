@@ -2,7 +2,7 @@
 function uploadQuestion() {
 	// extract question title
 	var question_title = document.getElementById("question_title").value;
-	var postString = "question_title=" + question_title + "&question_text=" + question_text;
+	var postString = "question_title=" + question_title;
 
 	// extract question text
 	var question_text = document.getElementById("question_text").value;

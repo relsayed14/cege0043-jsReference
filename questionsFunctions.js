@@ -1,5 +1,7 @@
  // create a custom popup
  var popup = L.popup();
+ var initpopup = false;
+ var questionDiv;
 
 //create an event detector to wait for the user's click event and then use the popup to show them where they clicked
 function onMapClick(e) {
@@ -15,10 +17,17 @@ function onMapClick(e) {
         console.log("Distance from you: " + distance + " km") */
 
         // code adopted from  https://stackoverflow.com/questions/43089768/how-to-import-html-text-in-a-leaflet-popup
-        popup.setLatLng(e.latlng)
-            .setContent('<iframe style="width: 600px; height: 500px;" src="./questionPopupForm.html"></iframe>')
-            .openOn(mymap);
-
+        popup.setLatLng(e.latlng);
+        if(!initpopup){
+        	initpopup = true;
+        	questionDiv = document.getElementById('questionDiv');
+        	questionDiv.style.display='block';
+        	popup.setContent(questionDiv);
+        }else{
+        	questionDiv.getElementsByClassName('questionform')[0].reset();
+        }
+        popup.openOn(mymap);
+        
     } else {
         alert("Can't get your location!");
     }
