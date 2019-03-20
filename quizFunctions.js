@@ -58,10 +58,10 @@ console.log('now in loadQuizLayer');
 
 			var popupQuizString = "<DIV id='quizPopup'" + feature.properties.id + "><h2>" + feature.properties.question_title + "</h2>";
 			popupQuizString = popupQuizString + "<p>" + feature.properties.question_text + "</p>";
-			popupQuizString = popupQuizString + "1.-"+ feature.properties.answer_1 + "<br>";
-			popupQuizString = popupQuizString + "2.-" + feature.properties.answer_2 + "<br>";
-			popupQuizString = popupQuizString + "3.-" + feature.properties.answer_3 + "<br>";
-			popupQuizString = popupQuizString + "4.-" + feature.properties.answer_4 + "<br><br />";
+			popupQuizString = popupQuizString + "1. "+ feature.properties.answer_1 + "<br>";
+			popupQuizString = popupQuizString + "2. " + feature.properties.answer_2 + "<br>";
+			popupQuizString = popupQuizString + "3. " + feature.properties.answer_3 + "<br>";
+			popupQuizString = popupQuizString + "4. " + feature.properties.answer_4 + "<br><br />";
 
 			return L.marker(latlng, {icon: pinkMarker}).bindPopup(popupQuizString);
 		}					

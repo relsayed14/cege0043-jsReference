@@ -69,5 +69,6 @@ function dataUploaded() {
 	if (client.readyState == 4) {
 		// change the DIV to show the response
 		alert(client.responseText);
+		loadQuizPoints(false);
 	}
 }
