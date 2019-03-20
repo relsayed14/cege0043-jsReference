@@ -41,7 +41,10 @@ function uploadQuestion() {
 	postString = postString + "&latitude=" + pointLat + "&longitude=" + pointLng;
 
 	alert (postString);
-	processData(postString); //uncomment this!
+	// close the popup automatically
+	mymap.closePopup();
+	processData(postString);
+
 }
 
 // global variable to hold the request
