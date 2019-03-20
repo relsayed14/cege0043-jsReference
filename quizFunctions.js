@@ -1,6 +1,8 @@
 // global variable to process AJAX request to obtain quiz points stored in database
 var client; 
 var quizPointsJSON; 
+
+
 var markers = {}; // to hold the markers currently on the map
 
 // global variable to hold quiz points set by Questions App - should be added and/ or removed as desired
@@ -23,6 +25,7 @@ function loadQuizPoints(showAnswer){
 	client.send();
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
 // AJAX response function to process the quiz points
 function processQuizPoints(){
 	if (client.readyState < 4){
@@ -30,15 +33,6 @@ function processQuizPoints(){
 	}
 	// if response has been successfully received by server
 	else if (client.readyState == 4) { 
-
-
-
-
-
-			getAllAnswers();
-
-
-
 		// if successful
 		if (client.status > 199 && client.status < 300) {
 			var quizPoints = client.responseText;
@@ -54,6 +48,7 @@ function processQuizPoints(){
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
 
 // only used in Questions App
 function loadQuizLayerNoAnswer(quizPoints){
@@ -69,16 +64,7 @@ console.log('now in loadQuizLayer');
 			// code to take values of the quesiton_title, question_text, choice_1, choice_2, choice_3, choice_4
 			// also includes the answer here but hidden
 
-			console.log("at the top ofpoint to layer now.")
-
-			var popupQuizString = "<DIV id='quizPopup'" + feature.properties.id + "><h2>" + feature.properties.question_title + "</h2>";
-			popupQuizString = popupQuizString + "<p>" + feature.properties.question_text + "</p>";
-			popupQuizString = popupQuizString + "1. "+ feature.properties.answer_1 + "<br>";
-			popupQuizString = popupQuizString + "2. " + feature.properties.answer_2 + "<br>";
-			popupQuizString = popupQuizString + "3. " + feature.properties.answer_3 + "<br>";
-			popupQuizString = popupQuizString + "4. " + feature.properties.answer_4 + "<br><br />";
-
-			return L.marker(latlng, {icon: pinkMarker}).bindPopup(popupQuizString);
+			return viewQuestionMarker(feature, latlng, null);
 		}					
 	}).addTo(mymap);
 
@@ -104,7 +90,13 @@ function loadQuizLayer(quizPoints){
 			// when clicked user can choose a quiz point to solve (quiz in an html div)
 			// code to take values of the quesiton_title, question_text, choice_1, choice_2, choice_3, choice_4
 			// also includes the answer here but hidden
-			return viewQuizMarker(feature, latlng);
+			var answered_previously = checkRepeatQuestion(feature.properties.id);
+			if(answered_previously != -1){
+				return viewQuestionMarker(feature, latlng, answered_previously);
+			}else{
+				return viewQuizMarker(feature, latlng);
+			}
+			
 			
 		}					
 	}).addTo(mymap);
@@ -114,7 +106,29 @@ function loadQuizLayer(quizPoints){
 }
 
 
-	// show quiz on the map
+
+	// marker for the question-maker's popup
+	function viewQuestionMarker(feature, latlng, answered_previously){
+		console.log("at the top of view Q marker now.")
+
+			var popupQuizString = "<DIV id='quizPopup'" + feature.properties.id + "><h2>" + feature.properties.question_title + "</h2>";
+			popupQuizString = popupQuizString + "<p>" + feature.properties.question_text + "</p>";
+			popupQuizString = popupQuizString + "1. "+ feature.properties.answer_1 + "<br>";
+			popupQuizString = popupQuizString + "2. " + feature.properties.answer_2 + "<br>";
+			popupQuizString = popupQuizString + "3. " + feature.properties.answer_3 + "<br>";
+			popupQuizString = popupQuizString + "4. " + feature.properties.answer_4 + "<br><br />";
+
+			// display correct answer if user had already answered the question
+			if(answered_previously){
+				popupQuizString = popupQuizString + "<p> Your Answer: "  + answered_previously.answer_selected  +  "</p><br />";
+				popupQuizString = popupQuizString + "<p> Correct Choice: "  + answered_previously.correct_answer  +  "</p><br />";
+			}
+
+			return L.marker(latlng, {icon: pinkMarker}).bindPopup(popupQuizString);
+	}
+
+
+	// show quiz on the map for the quiz-taker
 	function viewQuizMarker(feature, latlng){
 		console.log("at the top of view quiz marker now.")
 
@@ -239,31 +253,7 @@ function answerUploaded() {
 }
 
 
-// upload user answers to the database
-function getAllAnswers() {
-	quizClient = new XMLHttpRequest();
-	
-	var url = "http://developer.cege.ucl.ac.uk:" + httpPortNumber + "/allAnswers"; //get url with non-hardcoded port number
-	quizClient.open("GET", url, true);
-	quizClient.onreadystatechange = printAllAnswers;
-	try {
-		quizClient.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	}
-	catch (e) {
-		// this only works in internet explorer
-	}
 
-	quizClient.send();
-}
-
-
-
-function printAllAnswers(){
-if (quizClient.readyState == 4) {
-		// change the DIV to show the response
-		alert(quizClient.responseText);
-	}
-}	
 
 
 

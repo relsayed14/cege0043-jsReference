@@ -28,7 +28,7 @@ function quizStartup() {
 		getPort(); // obtain port number 
 		loadW3HTML(); // add HTML functionality
 		trackLocation(); // track the user's location
-		// to make sure that the port number is obtained before loading the quiz points
-		setTimeout(function(){ loadQuizPoints(true) }, 1000); 
+		setTimeout(function(){ loadQuizPoints(true); getAllAnswers(); }, 1000);  // to make sure that the port number is obtained before loading the quiz points
+
 	},false);
 }
