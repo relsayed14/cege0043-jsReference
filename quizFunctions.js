@@ -30,6 +30,15 @@ function processQuizPoints(){
 	}
 	// if response has been successfully received by server
 	else if (client.readyState == 4) { 
+
+
+
+
+
+			getAllAnswers();
+
+
+
 		// if successful
 		if (client.status > 199 && client.status < 300) {
 			var quizPoints = client.responseText;
@@ -103,7 +112,7 @@ function loadQuizLayer(quizPoints){
 	// change the map zoom so that all the data is shown
 	mymap.fitBounds(quizlayer.getBounds());
 }
-	
+
 
 	// show quiz on the map
 	function viewQuizMarker(feature, latlng){
@@ -111,32 +120,35 @@ function loadQuizLayer(quizPoints){
 
 		var popupQuizString = "<DIV id='quizPopup'" + feature.properties.id + "><h5>" + feature.properties.question_title + "</h5>";
 		popupQuizString = popupQuizString + "<p>" + feature.properties.question_text + "</p>";
-		popupQuizString = popupQuizString + "<input type='radio' name='answer' id='" + feature.properties.id + " 1'/>" + feature.properties.answer_1 + "<br>";
-		popupQuizString = popupQuizString + "<input type='radio' name='answer' id='" + feature.properties.id + " 2'/>" + feature.properties.answer_2 + "<br>";
-		popupQuizString = popupQuizString + "<input type='radio' name='answer' id='" + feature.properties.id + " 3'/>" + feature.properties.answer_3 + "<br>";
-		popupQuizString = popupQuizString + "<input type='radio' name='answer' id='" + feature.properties.id + " 4'/>" + feature.properties.answer_4 + "<br><br />";
-		popupQuizString = popupQuizString + "<button onclick='compareAnswer(); return false;'> Submit Answer</button>";
+		popupQuizString = popupQuizString + "<input type='radio' name='answers' id='" + feature.properties.id + " 1'/>" + feature.properties.answer_1 + "<br>";
+		popupQuizString = popupQuizString + "<input type='radio' name='answers' id='" + feature.properties.id + " 2'/>" + feature.properties.answer_2 + "<br>";
+		popupQuizString = popupQuizString + "<input type='radio' name='answers' id='" + feature.properties.id + " 3'/>" + feature.properties.answer_3 + "<br>";
+		popupQuizString = popupQuizString + "<input type='radio' name='answers' id='" + feature.properties.id + " 4'/>" + feature.properties.answer_4 + "<br><br />";
+		popupQuizString = popupQuizString + "<button onclick='compareAnswer(" + feature.properties.id + "); return false;'> Submit Answer </button>";
 
 			// popupQuizString = popupQuizString + "<button onclick='compareAnswer(" + feature.properties.id + "); return false;'> Submit Answer</button>";
 			
 			// add the answer as a hidden div
 			// code adopted from https://stackoverflow.com/questions/1992114/how-do-you-create-a-hidden-div-that-doesnt-create-a-line-break-or-horizontal-sp
-			popupQuizString = popupQuizString + "<div id=answer" + feature.properties.id + " hidden>" + feature.properties.correct_answer + "</div>" + "</div>";
+			popupQuizString = popupQuizString + "<div id=answers" + feature.properties.id + " hidden>" + feature.properties.correct_answer + "</div>" + "</div>";
 			markers[feature.properties.id] = L.marker(latlng, {icon: pinkMarker}).bindPopup(popupQuizString);
+
 			return markers[feature.properties.id];
+
 		}
 
 	// the function that the submit button calls
 	// this function compares the answer the user input to that selected by the Questions App user
 	// To do so, will need to compare to the hidden answer div
 	function compareAnswer(question_id) {
-		var hiddenAnswer = document.getElementById("answer" + question_id).innerHTML;
+		var hiddenAnswer = document.getElementById("answers" + question_id).innerHTML;
 		var correct_answer = false;
 		var chosenAnswer = 0;
 		
+		alert(hiddenAnswer);
 		// code to go through the possible (4) choices to get what the user selected
-		var postString = "&question_id" + question_id;
-
+		var postString = "question_id=" + question_id;
+		postString = postString + "&correct_answer=" + hiddenAnswer;
 		for(var i=1; i<5; i++) {
 			// if it is the first choice, then the user answer is 1
 			if(document.getElementById(question_id + " " + i).checked) {
@@ -155,11 +167,12 @@ function loadQuizLayer(quizPoints){
 						return L.marker([layer.getLatLng().lat, layer.getLatLng().lng], {icon: greenMarker}).addTo(mymap);
 					}
 				})
-
-				postString = postString + "&correct_answer=" + i;
-				
 			}
+
+			
+
 		}
+
 
 			// what to do is answer is incorrect - tell user and show the hidden answer div
 			if (correct_answer === false) {
@@ -191,7 +204,7 @@ var greenMarker = L.AwesomeMarkers.icon({
 });
 
 // create custom black marker to denote questions anwered incorrectly
-var greenMarker = L.AwesomeMarkers.icon({
+var blackMarker = L.AwesomeMarkers.icon({
 	icon: 'play',
 	markerColor: 'black'
 });
@@ -204,7 +217,6 @@ function uploadAnswer(postString) {
 	quizClient = new XMLHttpRequest();
 	postString = postString + "&port_id=" + httpPortNumber;
 	var url = "http://developer.cege.ucl.ac.uk:" + httpPortNumber + "/uploadAnswer"; //get url with non-hardcoded port number
-	//var url = 'http://developer.cege.ucl.ac.uk:' + httpPortNumber + "/reflectData";
 	quizClient.open("POST", url, true); // send to server
 	quizClient.onreadystatechange = answerUploaded;
 	try {
@@ -213,6 +225,8 @@ function uploadAnswer(postString) {
 	catch (e) {
 		// this only works in internet explorer
 	}
+	console.log('after url', postString);
+
 	quizClient.send(postString);
 }
 
@@ -223,6 +237,35 @@ function answerUploaded() {
 		alert(quizClient.responseText);
 	}
 }
+
+
+// upload user answers to the database
+function getAllAnswers() {
+	quizClient = new XMLHttpRequest();
+	
+	var url = "http://developer.cege.ucl.ac.uk:" + httpPortNumber + "/allAnswers"; //get url with non-hardcoded port number
+	quizClient.open("GET", url, true);
+	quizClient.onreadystatechange = printAllAnswers;
+	try {
+		quizClient.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	}
+	catch (e) {
+		// this only works in internet explorer
+	}
+
+	quizClient.send();
+}
+
+
+
+function printAllAnswers(){
+if (quizClient.readyState == 4) {
+		// change the DIV to show the response
+		alert(quizClient.responseText);
+	}
+}	
+
+
 
 
 
