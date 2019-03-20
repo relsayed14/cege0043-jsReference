@@ -1,23 +1,28 @@
 var userMarker;
 var firstLoad = true;
+var openQuiz = null; // to mark the current quiz the user has open 
+
 
 // keep device location in this variable
-var userLocation = null;
+// var userLocation = null;
 
 // code to check if location settings are on
 function trackLocation() {
 	console.log(navigator.geolocation);
 	if(navigator.geolocation) {
-		navigator.geolocation.watchPosition(showPosition);
+		navigator.geolocation.watchPosition(getDistanceFromMultiplePoints);
 	} else {
 		alert("Geolocation is not supported by this browser. Please change your settings and try again.");
 	}
 }
 
-// code to display user location on map by drawing a point
-function showPosition(position) {
+/* function showPosition(position) {
 	// use the position variable to get the actual coordinates
-    userLocation = position.coords;
+    userLocation = position;
+
+	alert('here1');
+	getDistanceFromMultiplePoints(userLocation);
+	alert('here2');
 
 	if (userMarker) {
 		mymap.removeLayer(userMarker);
@@ -34,12 +39,9 @@ function showPosition(position) {
     // get user coordinates, add to the map, then display them as popup on the map
 	userMarker = L.marker([position.coords.latitude, position.coords.longitude])
 	.addTo(mymap)
-	.bindPopup("Latitude: " + position.coords.latitude + " Longitude: " + position.coords.longitude);
-	
+	.bindPopup("Latitude: " + position.coords.latitude + " Longitude: " + position.coords.longitude); 
 
-
-
-}
+} */
 
 // calculate distance between user and multiplepoints
 /*function getDistance() {
@@ -70,17 +72,27 @@ function getDistanceFromPoint(position) {
 
 // function to get distance from several points on the layer
 function getDistanceFromMultiplePoints(position) {
-	var minDistance = 1000000; var closestQuiz = "";
-	for(var i = 0; i < quizPoints.features.length; i++) { 
-		var obj = quizPoints.features[i];
+	var minDistance = 1000000; 
+	var closestQuiz = null;
+
+	//console.log(quizPointsJSON);
+	//alert("Here1" + quizPointsJSON[0].features.length);
+
+	for(var i = 0; i < quizPointsJSON[0].features.length; i++) { 
+		var obj = quizPointsJSON[0].features[i];
 		var distance = calculateDistance(position.coords.latitude,
-			position.coords.longitude,obj.geometry.coordinates[0], obj.geometry.coordinates[1], 'K'); 
+			position.coords.longitude,obj.geometry.coordinates[1], obj.geometry.coordinates[0], 'K'); 
 		if (distance < minDistance){
 			minDistance = distance;
 			closestQuiz = obj.properties;
+			//alert(distance);
 		}
 	}
 
+	if(!openQuiz){
+		openQuiz = closestQuiz;
+		markers[openQuiz.id].openPopup();
+	}
 
 	alert("Closest quiz: " + closestQuiz.question_title + " is " + minDistance + " away");
 

@@ -1,6 +1,9 @@
 // global variable to process AJAX request to obtain quiz points stored in database
 var client; 
-var quizPoints;
+var quizPoints = null;
+var quizPointsJSON; 
+
+var markers = {};
 
 // global variable to hold quiz points set by Questions App - should be added and/ or removed as desired
 var quizlayer; 
@@ -33,7 +36,7 @@ function processQuizPoints(){
 		if (client.status > 199 && client.status < 300) {
 			quizPoints = client.responseText;
 			console.log(quizPoints);
-			
+
 			if(showAnswers){
 			loadQuizLayer(quizPoints);
 			}else{
@@ -45,9 +48,10 @@ function processQuizPoints(){
 }
 
 
+// only used in Questions App
 function loadQuizLayerNoAnswer(quizPoints){
 // convert from text xformat to JSON
-var quizPointsJSON = JSON.parse(quizPoints);
+quizPointsJSON = JSON.parse(quizPoints);
 console.log('now in loadQuizLayer');
 	// load geoJSON quiz points layer using custom markers
 	quizlayer = L.geoJSON(quizPointsJSON,
@@ -80,7 +84,9 @@ console.log('now in loadQuizLayer');
 // convert the received quiz points (in text format) into JSON format and add it to the map
 function loadQuizLayer(quizPoints){
 	// convert from text xformat to JSON
-	var quizPointsJSON = JSON.parse(quizPoints);
+	quizPointsJSON = JSON.parse(quizPoints);
+	console.log("Test", quizPointsJSON);
+
 	console.log('now in loadQuizLayer');
 	// load geoJSON quiz points layer using custom markers
 	quizlayer = L.geoJSON(quizPointsJSON,
@@ -90,8 +96,22 @@ function loadQuizLayer(quizPoints){
 			// when clicked user can choose a quiz point to solve (quiz in an html div)
 			// code to take values of the quesiton_title, question_text, choice_1, choice_2, choice_3, choice_4
 			// also includes the answer here but hidden
+			return viewQuizMarker(feature, latlng);
+			
+		}					
+	}).addTo(mymap);
 
-			console.log("at the top of point to layer now.")
+	// change the map zoom so that all the data is shown
+	mymap.fitBounds(quizlayer.getBounds());
+}
+	// dummy function to see if quiz submit button is working
+	function dummyFunction(){
+		alert("Button working!")
+	}
+
+	// show quiz on the map
+	function viewQuizMarker(feature, latlng){
+		console.log("at the top of view quiz marker now.")
 
 			var popupQuizString = "<DIV id='quizPopup'" + feature.properties.id + "><h5>" + feature.properties.question_title + "</h5>";
 			popupQuizString = popupQuizString + "<p>" + feature.properties.question_text + "</p>";
@@ -106,17 +126,8 @@ function loadQuizLayer(quizPoints){
 			// add the answer as a hidden div
 			// code adopted from https://stackoverflow.com/questions/1992114/how-do-you-create-a-hidden-div-that-doesnt-create-a-line-break-or-horizontal-sp
 			popupQuizString = popupQuizString + "<div id=answer" + feature.properties.id + " hidden>" + feature.properties.correct_answer + "</div>" + "</div>";
-
-			return L.marker(latlng, {icon: pinkMarker}).bindPopup(popupQuizString);
-		}					
-	}).addTo(mymap);
-
-	// change the map zoom so that all the data is shown
-	mymap.fitBounds(quizlayer.getBounds());
-}
-	// dummy function to see if quiz submit button is working
-	function dummyFunction(){
-		alert("Button working!")
+			markers[feature.properties.id] = L.marker(latlng, {icon: pinkMarker}).bindPopup(popupQuizString);
+			return markers[feature.properties.id];
 	}
 
 	// the function that the submit button calls
@@ -207,6 +218,14 @@ function uploadAnswer(postString) {
 		// this only works in internet explorer
 	}
 	quizClient.send(postString);
+}
+
+function answerUploaded() {
+	//this function listens out for the server to say that the data is ready - i.e. has state 4
+	if (quizClient.readyState == 4) {
+		// change the DIV to show the response
+		alert(quizClient.responseText);
+	}
 }
 
 
