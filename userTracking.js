@@ -36,6 +36,9 @@ function showPosition(position) {
 	.addTo(mymap)
 	.bindPopup("Latitude: " + position.coords.latitude + " Longitude: " + position.coords.longitude);
 	
+
+
+
 }
 
 // calculate distance between user and multiplepoints
@@ -68,16 +71,18 @@ function getDistanceFromPoint(position) {
 // function to get distance from several points on the layer
 function getDistanceFromMultiplePoints(position) {
 	var minDistance = 1000000; var closestQuiz = "";
-	for(var i = 0; i < quizzes.features.length; i++) { 
-		var obj = quizzes.features[i];
+	for(var i = 0; i < quizPoints.features.length; i++) { 
+		var obj = quizPoints.features[i];
 		var distance = calculateDistance(position.coords.latitude,
 			position.coords.longitude,obj.geometry.coordinates[0], obj.geometry.coordinates[1], 'K'); 
 		if (distance < minDistance){
 			minDistance = distance;
-			closestQuiz = obj.properties.place;
+			closestQuiz = obj.properties;
 		}
 	}
-	alert("Closest quiz: " + closestQuiz + " is " + minDistance + " away");
+
+
+	alert("Closest quiz: " + closestQuiz.question_title + " is " + minDistance + " away");
 
 	// pop up closest quiz
 }
