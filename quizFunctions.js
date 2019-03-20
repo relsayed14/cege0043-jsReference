@@ -1,9 +1,11 @@
 // global variable to process AJAX request to obtain quiz points stored in database
 var client; 
+var quizPoints;
 
 // global variable to hold quiz points set by Questions App - should be added and/ or removed as desired
 var quizlayer; 
 var showAnswers = false;
+
 // AJAX request function to load quizpoints onto the map
 function loadQuizPoints(showAnswer){
 	showAnswers = showAnswer;
@@ -29,7 +31,9 @@ function processQuizPoints(){
 	else if (client.readyState == 4) { 
 		// if successful
 		if (client.status > 199 && client.status < 300) {
-			var quizPoints = client.responseText;
+			quizPoints = client.responseText;
+			console.log(quizPoints);
+			
 			if(showAnswers){
 			loadQuizLayer(quizPoints);
 			}else{
@@ -87,9 +91,9 @@ function loadQuizLayer(quizPoints){
 			// code to take values of the quesiton_title, question_text, choice_1, choice_2, choice_3, choice_4
 			// also includes the answer here but hidden
 
-			console.log("at the top ofpoint to layer now.")
+			console.log("at the top of point to layer now.")
 
-			var popupQuizString = "<DIV id='quizPopup'" + feature.properties.id + "><h2>" + feature.properties.question_title + "</h2>";
+			var popupQuizString = "<DIV id='quizPopup'" + feature.properties.id + "><h5>" + feature.properties.question_title + "</h5>";
 			popupQuizString = popupQuizString + "<p>" + feature.properties.question_text + "</p>";
 			popupQuizString = popupQuizString + "<input type='radio' name='answer' id='" + feature.properties.id + " 1'/>" + feature.properties.answer_1 + "<br>";
 			popupQuizString = popupQuizString + "<input type='radio' name='answer' id='" + feature.properties.id + " 2'/>" + feature.properties.answer_2 + "<br>";
@@ -204,5 +208,6 @@ function uploadAnswer(postString) {
 	}
 	quizClient.send(postString);
 }
+
 
 
