@@ -88,8 +88,8 @@ function getDistanceFromMultiplePoints(position) {
 			//alert(distance);
 		}
 	}
-
-	if(!openQuiz){
+	// function to check if quiz is not open, or if the open popup is not the closest quiz
+	if(!openQuiz || (openQuiz && openQuiz.id != closestQuiz.id)){
 		openQuiz = closestQuiz;
 		markers[openQuiz.id].openPopup();
 	}

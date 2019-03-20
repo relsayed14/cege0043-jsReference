@@ -1,9 +1,7 @@
 // global variable to process AJAX request to obtain quiz points stored in database
 var client; 
-var quizPoints = null;
 var quizPointsJSON; 
-
-var markers = {};
+var markers = {}; // to hold the markers currently on the map
 
 // global variable to hold quiz points set by Questions App - should be added and/ or removed as desired
 var quizlayer; 
@@ -34,13 +32,13 @@ function processQuizPoints(){
 	else if (client.readyState == 4) { 
 		// if successful
 		if (client.status > 199 && client.status < 300) {
-			quizPoints = client.responseText;
+			var quizPoints = client.responseText;
 			console.log(quizPoints);
 
 			if(showAnswers){
-			loadQuizLayer(quizPoints);
+				loadQuizLayer(quizPoints);
 			}else{
-		 	loadQuizLayerNoAnswer(quizPoints);
+				loadQuizLayerNoAnswer(quizPoints);
 
 			}
 		}
@@ -85,6 +83,7 @@ console.log('now in loadQuizLayer');
 function loadQuizLayer(quizPoints){
 	// convert from text xformat to JSON
 	quizPointsJSON = JSON.parse(quizPoints);
+
 	console.log("Test", quizPointsJSON);
 
 	console.log('now in loadQuizLayer');
@@ -104,22 +103,19 @@ function loadQuizLayer(quizPoints){
 	// change the map zoom so that all the data is shown
 	mymap.fitBounds(quizlayer.getBounds());
 }
-	// dummy function to see if quiz submit button is working
-	function dummyFunction(){
-		alert("Button working!")
-	}
+	
 
 	// show quiz on the map
 	function viewQuizMarker(feature, latlng){
 		console.log("at the top of view quiz marker now.")
 
-			var popupQuizString = "<DIV id='quizPopup'" + feature.properties.id + "><h5>" + feature.properties.question_title + "</h5>";
-			popupQuizString = popupQuizString + "<p>" + feature.properties.question_text + "</p>";
-			popupQuizString = popupQuizString + "<input type='radio' name='answer' id='" + feature.properties.id + " 1'/>" + feature.properties.answer_1 + "<br>";
-			popupQuizString = popupQuizString + "<input type='radio' name='answer' id='" + feature.properties.id + " 2'/>" + feature.properties.answer_2 + "<br>";
-			popupQuizString = popupQuizString + "<input type='radio' name='answer' id='" + feature.properties.id + " 3'/>" + feature.properties.answer_3 + "<br>";
-			popupQuizString = popupQuizString + "<input type='radio' name='answer' id='" + feature.properties.id + " 4'/>" + feature.properties.answer_4 + "<br><br />";
-			popupQuizString = popupQuizString + "<button onclick='dummyFunction(); return false;'> Submit Answer</button>";
+		var popupQuizString = "<DIV id='quizPopup'" + feature.properties.id + "><h5>" + feature.properties.question_title + "</h5>";
+		popupQuizString = popupQuizString + "<p>" + feature.properties.question_text + "</p>";
+		popupQuizString = popupQuizString + "<input type='radio' name='answer' id='" + feature.properties.id + " 1'/>" + feature.properties.answer_1 + "<br>";
+		popupQuizString = popupQuizString + "<input type='radio' name='answer' id='" + feature.properties.id + " 2'/>" + feature.properties.answer_2 + "<br>";
+		popupQuizString = popupQuizString + "<input type='radio' name='answer' id='" + feature.properties.id + " 3'/>" + feature.properties.answer_3 + "<br>";
+		popupQuizString = popupQuizString + "<input type='radio' name='answer' id='" + feature.properties.id + " 4'/>" + feature.properties.answer_4 + "<br><br />";
+		popupQuizString = popupQuizString + "<button onclick='compareAnswer(); return false;'> Submit Answer</button>";
 
 			// popupQuizString = popupQuizString + "<button onclick='compareAnswer(" + feature.properties.id + "); return false;'> Submit Answer</button>";
 			
@@ -128,7 +124,7 @@ function loadQuizLayer(quizPoints){
 			popupQuizString = popupQuizString + "<div id=answer" + feature.properties.id + " hidden>" + feature.properties.correct_answer + "</div>" + "</div>";
 			markers[feature.properties.id] = L.marker(latlng, {icon: pinkMarker}).bindPopup(popupQuizString);
 			return markers[feature.properties.id];
-	}
+		}
 
 	// the function that the submit button calls
 	// this function compares the answer the user input to that selected by the Questions App user
