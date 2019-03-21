@@ -13,12 +13,8 @@ function startup() {
 function questionStartup() {
 	alert("Welcome to the Questions App!");
 	document.addEventListener('DOMContentLoaded', function() {
-		// console.log('before port.')
 		getPort(); // obtain port number 
-		// console.log('before loading html.')
 		loadW3HTML(); // add HTML functionality
-		// console.log('startup function on.')
-		// getLocation(); // track the user's location
 	},false);
 }
 
@@ -28,7 +24,8 @@ function quizStartup() {
 		getPort(); // obtain port number 
 		loadW3HTML(); // add HTML functionality
 		trackLocation(); // track the user's location
-		setTimeout(function(){ loadQuizPoints(true); getAllAnswers(); }, 1000);  // to make sure that the port number is obtained before loading the quiz points
+		setTimeout(function(){ getAllAnswers() }, 1000);  // to make sure that the port number is obtained before loading the answers
+		setTimeout(function(){ loadQuizPoints(true) }, 2000);  // to make sure that the port number is obtained before loading the quiz points
 
 	},false);
 }

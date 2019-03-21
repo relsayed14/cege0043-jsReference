@@ -94,7 +94,7 @@ function getDistanceFromMultiplePoints(position) {
 		markers[openQuiz.id].openPopup();
 	}
 
-	alert("Closest quiz: " + closestQuiz.question_title + " is " + minDistance + " away");
+	// alert("Closest quiz: " + closestQuiz.question_title + " is " + minDistance + " away");
 
 	// pop up closest quiz
 }

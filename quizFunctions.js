@@ -109,20 +109,24 @@ function loadQuizLayer(quizPoints){
 
 	// marker for the question-maker's popup
 	function viewQuestionMarker(feature, latlng, answered_previously){
-		console.log("at the top of view Q marker now.")
 
-			var popupQuizString = "<DIV id='quizPopup'" + feature.properties.id + "><h2>" + feature.properties.question_title + "</h2>";
+			var popupQuizString = "<DIV id='quizPopup'" + feature.properties.id + "><h5>" + feature.properties.question_title + "</h5>";
 			popupQuizString = popupQuizString + "<p>" + feature.properties.question_text + "</p>";
 			popupQuizString = popupQuizString + "1. "+ feature.properties.answer_1 + "<br>";
 			popupQuizString = popupQuizString + "2. " + feature.properties.answer_2 + "<br>";
 			popupQuizString = popupQuizString + "3. " + feature.properties.answer_3 + "<br>";
-			popupQuizString = popupQuizString + "4. " + feature.properties.answer_4 + "<br><br />";
+			popupQuizString = popupQuizString + "4. " + feature.properties.answer_4 + "<br>";
 
 			// display correct answer if user had already answered the question
-			if(answered_previously){
-				popupQuizString = popupQuizString + "<p> Your Answer: "  + answered_previously.answer_selected  +  "</p><br />";
-				popupQuizString = popupQuizString + "<p> Correct Choice: "  + answered_previously.correct_answer  +  "</p><br />";
-			}
+			/* if(answered_previously){
+				popupQuizString = popupQuizString + "<p> Your Answer: "  + answered_previously.answer_selected + " ||  ";
+				popupQuizString = popupQuizString + "Correct Choice: "  + answered_previously.correct_answer  +  "</p>";
+				if(answered_previously.correct_answer != answered_previously.answer_selected){
+				
+				}else{
+
+				}
+			} */
 
 			return L.marker(latlng, {icon: pinkMarker}).bindPopup(popupQuizString);
 	}
@@ -147,6 +151,7 @@ function loadQuizLayer(quizPoints){
 			popupQuizString = popupQuizString + "<div id=answers" + feature.properties.id + " hidden>" + feature.properties.correct_answer + "</div>" + "</div>";
 			markers[feature.properties.id] = L.marker(latlng, {icon: pinkMarker}).bindPopup(popupQuizString);
 
+			console.log(markers[feature.properties.id]);
 			return markers[feature.properties.id];
 
 		}
@@ -183,10 +188,7 @@ function loadQuizLayer(quizPoints){
 				})
 			}
 
-			
-
 		}
-
 
 			// what to do is answer is incorrect - tell user and show the hidden answer div
 			if (correct_answer === false) {
