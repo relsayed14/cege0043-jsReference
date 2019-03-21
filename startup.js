@@ -22,10 +22,16 @@ function quizStartup() {
 	getPort(); // obtain port number 
 	loadW3HTML(); // add HTML functionality
 	setTimeout(function(){ 
-			getAllAnswers(); 
+			getAllAnswers(function (){
+				// function to execute after getAllAnswers has been executed
+				parseAllAnswers();
+		       loadQuizPoints(true);
+
+			}); 
+			
 	}, 1000); // to make sure that the port number is obtained before loading the answers
 	setTimeout(function(){ 
-			loadQuizPoints(true);
+			// loadQuizPoints(true);
 			trackLocation(); // track the user's location
 	 }, 2000); // to make sure that the port number is obtained before loading the quiz points
 

@@ -10,8 +10,8 @@ var openQuiz = null; // to mark the current quiz the user has open
 function trackLocation() {
 	console.log(navigator.geolocation);
 	if(navigator.geolocation) {
-		getDistanceFromMultiplePoints({coord:{latitude:21.221212,longitude:3.131232}});
-		//navigator.geolocation.watchPosition(getDistanceFromMultiplePoints);
+		// getDistanceFromMultiplePoints({coords:{latitude:51.6095209,longitude:-0.200509}});
+		navigator.geolocation.watchPosition(getDistanceFromMultiplePoints);
 	} else {
 		alert("Geolocation is not supported by this browser. Please change your settings and try again.");
 	}

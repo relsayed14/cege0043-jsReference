@@ -2,12 +2,12 @@
 var client; 
 var quizPointsJSON; 
 
-
-var markers = {}; // to hold the markers currently on the map
+var markers = {}; // array to hold the markers currently on the map
 
 // global variable to hold quiz points set by Questions App - should be added and/ or removed as desired
 var quizlayer; 
 var showAnswers = false;
+var correctAnswers = 0;
 
 // AJAX request function to load quizpoints onto the map
 function loadQuizPoints(showAnswer){
@@ -109,14 +109,18 @@ function loadQuizLayer(quizPoints){
 
 	// marker for the question-maker's popup
 	function viewQuestionMarker(feature, latlng, answered_previously){
-
-			var popupQuizString = "<DIV id='quizPopup'" + feature.properties.id + "><h5>" + feature.properties.question_title + "</h5>";
-			popupQuizString = popupQuizString + "<p>" + feature.properties.question_text + "</p>";
-			popupQuizString = popupQuizString + "1. "+ feature.properties.answer_1 + "<br>";
-			popupQuizString = popupQuizString + "2. " + feature.properties.answer_2 + "<br>";
-			popupQuizString = popupQuizString + "3. " + feature.properties.answer_3 + "<br>";
-			popupQuizString = popupQuizString + "4. " + feature.properties.answer_4 + "<br>";
-
+		var correct = false;
+		var popupQuizString = "<DIV id='quizPopup'" + feature.properties.id + "><h5>" + feature.properties.question_title + "</h5>";
+		popupQuizString = popupQuizString + "<p>" + feature.properties.question_text + "</p>";
+		popupQuizString = popupQuizString + "1. "+ feature.properties.answer_1 + "<br>";
+		popupQuizString = popupQuizString + "2. " + feature.properties.answer_2 + "<br>";
+		popupQuizString = popupQuizString + "3. " + feature.properties.answer_3 + "<br>";
+		popupQuizString = popupQuizString + "4. " + feature.properties.answer_4 + "<br>";
+		let answer_info = checkRepeatQuestion(feature.properties.id);
+		correct = answer_info.correct_answer == answer_info.answer_selected;
+		if (correct){
+			correctAnswers++;
+		}
 			// display correct answer if user had already answered the question
 			/* if(answered_previously){
 				popupQuizString = popupQuizString + "<p> Your Answer: "  + answered_previously.answer_selected + " ||  ";
@@ -127,14 +131,15 @@ function loadQuizLayer(quizPoints){
 
 				}
 			} */
+			markers[feature.properties.id] = L.marker(latlng, {icon: (correct?greenMarker:blackMarker) }).bindPopup(popupQuizString);
 
-			return L.marker(latlng, {icon: pinkMarker}).bindPopup(popupQuizString);
-	}
+			return markers[feature.properties.id];
+		}
 
 
 	// show quiz on the map for the quiz-taker
 	function viewQuizMarker(feature, latlng){
-		console.log("at the top of view quiz marker now.")
+		console.log("at the top of view quiz marker now.");
 
 		var popupQuizString = "<DIV id='quizPopup'" + feature.properties.id + "><h5>" + feature.properties.question_title + "</h5>";
 		popupQuizString = popupQuizString + "<p>" + feature.properties.question_text + "</p>";
@@ -179,11 +184,13 @@ function loadQuizLayer(quizPoints){
 				alert("Good job! You have selected the correct answer.");
 				// this means that this is the correct answer, therefore the layer should load the marker as being correct
 				correct_answer = true;
-
+				correctAnswers++;
 				quizlayer.eachLayer(function(layer) {
 					if(layer.feature.properties.id == question_id) {
 						// use the green marker to denote a correct answer
+						
 						return L.marker([layer.getLatLng().lat, layer.getLatLng().lng], {icon: greenMarker}).addTo(mymap);
+
 					}
 				})
 			}
@@ -205,6 +212,7 @@ function loadQuizLayer(quizPoints){
 			mymap.closePopup();
 			// upload the answer to the database 
 			uploadAnswer(postString); 
+			alert("You have answered " + correctAnswers +" questions correctly.");
 		}
 
 // create custom pink marker
