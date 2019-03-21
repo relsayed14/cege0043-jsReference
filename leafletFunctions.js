@@ -5,33 +5,9 @@ var busstops;
 var mymap;
 
 var earthquakelayer;
- var busstoplayer;
-
-function addPointLinePoly() {
-	//add a point
-	L.marker([50.93,-6.29]).addTo(mymap);
-
-	//add a circle
-	L.circle([51.5,-0.09],50000, {
-		color:'red',
-		fillColor:'#f03',
-		fillOpacity: 0.5
-	}).addTo(mymap);
+var busstoplayer;
 
 
-	//add a polygon with 2 end points (i.e. a line)
-	var myLine = L.polygon([
-		[55.7,-21.81],
-		[58.51,13.32]
-		],{
-
-			color:'red',
-			fillColor:'#f06',
-			fillOpacity: '0.5'
-
-		}).addTo(mymap);
-
-}
 
 // create the code to get the data using the XMLHttpRequest
    	function getData(layername) {
@@ -39,6 +15,8 @@ function addPointLinePoly() {
 
    		// dependig on the layer name, we get different URLs
    			var url;
+
+        // this should bbe -- if (layername == quizlayer) { ADD WHERE THE QUIZPOINTS GEOJSON FILE IS!! } - how??!!
    			if (layername == "earthquakes") {
    				url =  "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson"
    			} 

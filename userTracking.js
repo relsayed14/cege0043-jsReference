@@ -10,7 +10,8 @@ var openQuiz = null; // to mark the current quiz the user has open
 function trackLocation() {
 	console.log(navigator.geolocation);
 	if(navigator.geolocation) {
-		navigator.geolocation.watchPosition(getDistanceFromMultiplePoints);
+		getDistanceFromMultiplePoints({coord:{latitude:21.221212,longitude:3.131232}});
+		//navigator.geolocation.watchPosition(getDistanceFromMultiplePoints);
 	} else {
 		alert("Geolocation is not supported by this browser. Please change your settings and try again.");
 	}
@@ -91,12 +92,8 @@ function getDistanceFromMultiplePoints(position) {
 	// function to check if quiz is not open, or if the open popup is not the closest quiz
 	if(!openQuiz || (openQuiz && openQuiz.id != closestQuiz.id)){
 		openQuiz = closestQuiz;
-		markers[openQuiz.id].openPopup();
+		markers[openQuiz.id].openPopup(); // pop up closest quiz
 	}
-
-	// alert("Closest quiz: " + closestQuiz.question_title + " is " + minDistance + " away");
-
-	// pop up closest quiz
 }
 
 //code to get distance adapted from https://www.htmlgoodies.com/beyond/javascript/calculate-the-distance-between-two-points-inyour-web-apps.html

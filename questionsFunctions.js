@@ -16,7 +16,6 @@ function onMapClick(e) {
         /* var distance = calculateDistance(e.latlng.lat, e.latlng.lng, userLocation.latitude, userLocation.longitude, "K");
         console.log("Distance from you: " + distance + " km") */
 
-        // code adopted from  https://stackoverflow.com/questions/43089768/how-to-import-html-text-in-a-leaflet-popup
         popup.setLatLng(e.latlng);
         if(!initpopup){
         	initpopup = true;

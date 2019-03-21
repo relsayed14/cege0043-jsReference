@@ -19,13 +19,14 @@ function questionStartup() {
 }
 
 function quizStartup() {
-	alert("Welcome to the Quiz App!");
-	document.addEventListener('DOMContentLoaded', function() {
-		getPort(); // obtain port number 
-		loadW3HTML(); // add HTML functionality
-		trackLocation(); // track the user's location
-		setTimeout(function(){ getAllAnswers() }, 1000);  // to make sure that the port number is obtained before loading the answers
-		setTimeout(function(){ loadQuizPoints(true) }, 2000);  // to make sure that the port number is obtained before loading the quiz points
+	getPort(); // obtain port number 
+	loadW3HTML(); // add HTML functionality
+	setTimeout(function(){ 
+			getAllAnswers(); 
+	}, 1000); // to make sure that the port number is obtained before loading the answers
+	setTimeout(function(){ 
+			loadQuizPoints(true);
+			trackLocation(); // track the user's location
+	 }, 2000); // to make sure that the port number is obtained before loading the quiz points
 
-	},false);
 }

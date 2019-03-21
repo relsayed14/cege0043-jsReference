@@ -45,9 +45,10 @@ function checkRepeatQuestion(question_id){
 	return -1; //flag to detect if question has not been solved 
 }
 
+//To check number of correct answers
+//loop -> if(allAnswers[i].port_id == httpPortNumber && allAnswers[i].correct_answer == allAnswers[i].answer_selected) -> count++
 
-
-
+// userRanking[port_id] = count
 
 
 
