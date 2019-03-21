@@ -1,10 +1,5 @@
 var allAnswers;
-
-
-// function to get all answers that user has already answered
-function currentUserAnsweredQs () {
-
-}
+var isAnswerCorrect = {}; // object to check if a question is answered correctly
 
 // upload user answers to the database
 function getAllAnswers(readyFunction) {
@@ -28,7 +23,11 @@ function getAllAnswers(readyFunction) {
 function parseAllAnswers(){
 if (quizClient.readyState == 4) {
 		allAnswers = JSON.parse(quizClient.responseText).rows;
-
+		for(var i = 0 ; i < allAnswers.length ; i++){
+			if(allAnswers[i].port_id == httpPortNumber && allAnswers[i].question_id){
+				isAnswerCorrect[allAnswers[i].question_id] = (allAnswers[i].correct_answer == allAnswers[i].answer_selected);
+			}
+		}
 	}
 }	
 

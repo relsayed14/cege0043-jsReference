@@ -10,7 +10,8 @@ var openQuiz = null; // to mark the current quiz the user has open
 function trackLocation() {
 	console.log(navigator.geolocation);
 	if(navigator.geolocation) {
-		// getDistanceFromMultiplePoints({coords:{latitude:51.6095209,longitude:-0.200509}});
+		//
+		 getDistanceFromMultiplePoints({coords:{latitude:51.6095209,longitude:-0.200509}});
 		navigator.geolocation.watchPosition(getDistanceFromMultiplePoints);
 	} else {
 		alert("Geolocation is not supported by this browser. Please change your settings and try again.");
@@ -63,7 +64,7 @@ function getDistanceFromPoint(position) {
 	var lat = 51.524616;
 	var lng = -0.13818;
 
-	//returnt the distance in kilometres
+	//return the distance in kilometres
 	var distance = calculateDistance(position.coords.latitude, position.coords.longitude,lat,lng,"K");
 	alert("You are within " + distance + " m from point.")
 	document.getElementById("distancediv").innerHTML = "The distance between the user and the fixed point is " + distance + " km."
@@ -79,7 +80,7 @@ function getDistanceFromMultiplePoints(position) {
 	//console.log(quizPointsJSON);
 	//alert("Here1" + quizPointsJSON[0].features.length);
 
-	for(var i = 0; i < quizPointsJSON[0].features.length; i++) { 
+	for (var i = 0; i < quizPointsJSON[0].features.length; i++) { 
 		var obj = quizPointsJSON[0].features[i];
 		var distance = calculateDistance(position.coords.latitude,
 			position.coords.longitude,obj.geometry.coordinates[1], obj.geometry.coordinates[0], 'K'); 
@@ -89,8 +90,8 @@ function getDistanceFromMultiplePoints(position) {
 			//alert(distance);
 		}
 	}
-	// function to check if quiz is not open, or if the open popup is not the closest quiz
-	if(!openQuiz || (openQuiz && openQuiz.id != closestQuiz.id)){
+	// function to check if quiz is not open, or if the open popup is not the closest quiz or closest quiz has been answered incorrectly
+	if((!openQuiz || (openQuiz && openQuiz.id != closestQuiz.id)) && !isAnswerCorrect[closestQuiz.id]){
 		openQuiz = closestQuiz;
 		markers[openQuiz.id].openPopup(); // pop up closest quiz
 	}
