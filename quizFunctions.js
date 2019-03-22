@@ -1,11 +1,14 @@
 // global variable to process AJAX request to obtain quiz points stored in database
 var client; 
 var quizPointsJSON; 
+var quizPointsJSONAllUsers; 
+
 
 var markers = {}; // array to hold the markers currently on the map
 
 // global variable to hold quiz points set by Questions App - should be added and/ or removed as desired
 var quizlayer; 
+var quizLayerAllUsers;
 var showAnswers = false;
 var correctAnswers = 0;
 
@@ -91,7 +94,7 @@ function loadQuizLayer(quizPoints){
 			// code to take values of the quesiton_title, question_text, choice_1, choice_2, choice_3, choice_4
 			// also includes the answer here but hidden
 			var answered_previously = checkRepeatQuestion(feature.properties.id);
-			if(answered_previously != -1){
+			if(answered_previously != -1){ //-1 means they have not answered before
 				return viewQuestionMarker(feature, latlng, answered_previously);
 			}else{
 				return viewQuizMarker(feature, latlng);
@@ -116,6 +119,23 @@ function loadQuizLayer(quizPoints){
 		popupQuizString = popupQuizString + "2. " + feature.properties.answer_2 + "<br>";
 		popupQuizString = popupQuizString + "3. " + feature.properties.answer_3 + "<br>";
 		popupQuizString = popupQuizString + "4. " + feature.properties.answer_4 + "<br>";
+		
+		////////////////////////////////////////////////////////////////////////////////
+		// Code below for being able to anwswer the incorrect questions again! //
+		////////////////////////////////////////////////////////////////////////////////
+
+		/* var popupQuizString = "<DIV id='quizPopup'" + feature.properties.id + "><h5>" + feature.properties.question_title + "</h5>";
+		popupQuizString = popupQuizString + "<p>" + feature.properties.question_text + "</p>";
+		popupQuizString = popupQuizString + "<input type='radio' name='answers' id='" + feature.properties.id + " 1'/>" + feature.properties.answer_1 + "<br>";
+		popupQuizString = popupQuizString + "<input type='radio' name='answers' id='" + feature.properties.id + " 2'/>" + feature.properties.answer_2 + "<br>";
+		popupQuizString = popupQuizString + "<input type='radio' name='answers' id='" + feature.properties.id + " 3'/>" + feature.properties.answer_3 + "<br>";
+		popupQuizString = popupQuizString + "<input type='radio' name='answers' id='" + feature.properties.id + " 4'/>" + feature.properties.answer_4 + "<br><br />";
+		popupQuizString = popupQuizString + "<button onclick='compareAnswer(" + feature.properties.id + "); return false;'> Submit Answer </button>"; */
+			
+			// add the answer as a hidden div
+			// code adopted from https://stackoverflow.com/questions/1992114/how-do-you-create-a-hidden-div-that-doesnt-create-a-line-break-or-horizontal-sp
+			popupQuizString = popupQuizString + "<div id=answers" + feature.properties.id + " hidden>" + feature.properties.correct_answer + "</div>" + "</div>";
+		
 		let answer_info = checkRepeatQuestion(feature.properties.id);
 		correct = answer_info.correct_answer == answer_info.answer_selected;
 		if (correct){
@@ -131,8 +151,11 @@ function loadQuizLayer(quizPoints){
 
 				}
 			} */
-			markers[feature.properties.id] = L.marker(latlng, {icon: (correct?greenMarker:blackMarker) }).bindPopup(popupQuizString);
-
+			if(!correct){
+				markers[feature.properties.id] = L.marker(latlng, {icon: (correct?greenMarker:blackMarker) }).bindPopup(popupQuizString);
+			}else{
+				markers[feature.properties.id] = null;
+			}
 			return markers[feature.properties.id];
 		}
 
@@ -169,7 +192,7 @@ function loadQuizLayer(quizPoints){
 		var correct_answer = false;
 		var chosenAnswer = 0;
 		
-		alert(hiddenAnswer);
+		alert("The correct answer is choice " + hiddenAnswer);
 		// code to go through the possible (4) choices to get what the user selected
 		var postString = "question_id=" + question_id;
 		postString = postString + "&correct_answer=" + hiddenAnswer;
@@ -262,9 +285,75 @@ function answerUploaded() {
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
 
 
+// AJAX request function to load quizpoints onto the map
+function loadQuizPointsAllUsers(){
+	client = new XMLHttpRequest();
 
+	// parameters needed to send request to server
+	var url = "http://developer.cege.ucl.ac.uk:" + httpPortNumber + "/getQuizPointsAllUsers"; 
+	
+	//send GET request to server
+	client.open("GET", url, true); 
+	// notify server of content type
+	client.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	client.onreadystatechange = processQuizPointsAllUsers; // once request is received by server
+	client.send();
+}
+
+
+// AJAX response function to process the quiz points
+function processQuizPointsAllUsers(){
+	if (client.readyState < 4){
+		console.log('Processing quiz points...');
+	}
+	// if response has been successfully received by server
+	else if (client.readyState == 4) { 
+		// if successful
+		if (client.status > 199 && client.status < 300) {
+			var quizPoints = client.responseText;
+			console.log(quizPoints);
+			loadQuizLayerAllUsers(quizPoints);
+			
+		}
+	}
+}
+
+// convert the received quiz points (in text format) into JSON format and add it to the map
+function loadQuizLayerAllUsers(quizPoints){
+	// convert from text xformat to JSON
+	quizPointsJSONAllUsers = JSON.parse(quizPoints);
+	getDistanceFromMultiplePointsAllUsers(user_position);
+
+	console.log('now in loadQuizLayer');
+	// load geoJSON quiz points layer using custom markers
+	quizLayerAllUsers = L.geoJSON(quizPointsJSONAllUsers,
+	{
+		// use pointToLayer to create the marker
+		pointToLayer: function(feature, latlng){
+			// when clicked user can choose a quiz point to solve (quiz in an html div)
+			// code to take values of the quesiton_title, question_text, choice_1, choice_2, choice_3, choice_4
+			// also includes the answer here but hidden
+			var answered_previously = checkRepeatQuestion(feature.properties.id);
+			if(answered_previously != -1){
+				return viewQuestionMarker(feature, latlng, answered_previously);
+			}else{
+				return viewQuizMarker(feature, latlng);
+			}
+			
+			
+		}					
+	}).addTo(mymap);
+
+	// change the map zoom so that all the data is shown
+	mymap.fitBounds(quizlayer.getBounds());
+}
+
+function removeAllUsersQuizLayer(){
+	mymap.removeLayer(quizLayerAllUsers);
+}
 
 
 

@@ -1,7 +1,7 @@
 var userMarker;
 var firstLoad = true;
 var openQuiz = null; // to mark the current quiz the user has open 
-
+var user_position = null;
 
 // keep device location in this variable
 // var userLocation = null;
@@ -10,7 +10,6 @@ var openQuiz = null; // to mark the current quiz the user has open
 function trackLocation() {
 	console.log(navigator.geolocation);
 	if(navigator.geolocation) {
-		//
 		 getDistanceFromMultiplePoints({coords:{latitude:51.6095209,longitude:-0.200509}});
 		navigator.geolocation.watchPosition(getDistanceFromMultiplePoints);
 	} else {
@@ -18,62 +17,11 @@ function trackLocation() {
 	}
 }
 
-/* function showPosition(position) {
-	// use the position variable to get the actual coordinates
-    userLocation = position;
-
-	alert('here1');
-	getDistanceFromMultiplePoints(userLocation);
-	alert('here2');
-
-	if (userMarker) {
-		mymap.removeLayer(userMarker);
-	}
-
-	// Zoom into user location
-    // firstLoad variable is a flag to change the map centre 
-    if(firstLoad){
-        firstLoad = false;
-        mymap.panTo(new L.LatLng(userLocation.latitude, userLocation.longitude));
-    }
-    console.log("Moved to", position);
-
-    // get user coordinates, add to the map, then display them as popup on the map
-	userMarker = L.marker([position.coords.latitude, position.coords.longitude])
-	.addTo(mymap)
-	.bindPopup("Latitude: " + position.coords.latitude + " Longitude: " + position.coords.longitude); 
-
-} */
-
-// calculate distance between user and multiplepoints
-/*function getDistance() {
-	// alert('getting distance...');
-	//getDistanceFromPoint is the function called once distance has been found
-	navigator.geolocation.getCurrentPosition(getDistanceFromMultiplePoints);
-}
-
-/* // calculate distance between user and only the selected point
-function getSetDistance() {
-	//getDistanceFromPoint is the function called once distance has been found
-	navigator.geolocation.getCurrentPosition(getDistanceFromPoint);
-}
-// get distance only from the pre-definied point
-function getDistanceFromPoint(position) {
-	//find the coordinates of a point using this website: https://getlatlong.net
-	// these are the coordinates for UCL Main Gate
-	var lat = 51.524616;
-	var lng = -0.13818;
-
-	//return the distance in kilometres
-	var distance = calculateDistance(position.coords.latitude, position.coords.longitude,lat,lng,"K");
-	alert("You are within " + distance + " m from point.")
-	document.getElementById("distancediv").innerHTML = "The distance between the user and the fixed point is " + distance + " km."
-	
-} */
-
 
 // function to get distance from several points on the layer
 function getDistanceFromMultiplePoints(position) {
+	user_position = position;
+
 	var minDistance = 1000000; 
 	var closestQuiz = null;
 
@@ -84,17 +32,38 @@ function getDistanceFromMultiplePoints(position) {
 		var obj = quizPointsJSON[0].features[i];
 		var distance = calculateDistance(position.coords.latitude,
 			position.coords.longitude,obj.geometry.coordinates[1], obj.geometry.coordinates[0], 'K'); 
-		if (distance < minDistance){
+		if (distance < minDistance && !isAnswered[obj.properties.id]){
 			minDistance = distance;
 			closestQuiz = obj.properties;
-			//alert(distance);
+		
 		}
 	}
 	// function to check if quiz is not open, or if the open popup is not the closest quiz or closest quiz has been answered incorrectly
-	if((!openQuiz || (openQuiz && openQuiz.id != closestQuiz.id)) && !isAnswerCorrect[closestQuiz.id]){
+	if((!openQuiz || (openQuiz && openQuiz.id != closestQuiz.id))){
 		openQuiz = closestQuiz;
 		markers[openQuiz.id].openPopup(); // pop up closest quiz
 	}
+}
+
+function getDistanceFromMultiplePointsAllUsers(position) {
+	var minDistance = 1000000; 
+	var closestQuiz = null;
+	var closest5=[];
+
+	var points = quizPointsJSONAllUsers[0].features;
+	//console.log(quizPointsJSON);
+	//alert("Here1" + quizPointsJSON[0].features.length);
+	points.sort(function(a,b){
+		return calculateDistance(position.coords.latitude,
+			position.coords.longitude,a.geometry.coordinates[1], a.geometry.coordinates[0], 'K')-
+		calculateDistance(position.coords.latitude,
+			position.coords.longitude,b.geometry.coordinates[1], b.geometry.coordinates[0], 'K');
+	})
+
+
+	
+
+	quizPointsJSONAllUsers[0].features = points.slice(0,5);
 }
 
 //code to get distance adapted from https://www.htmlgoodies.com/beyond/javascript/calculate-the-distance-between-two-points-inyour-web-apps.html
