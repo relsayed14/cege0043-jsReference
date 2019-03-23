@@ -4,7 +4,7 @@ var weeklyQuestionsLayer; // global variable to hold latest quiz points layers f
 // AJAX request function to load latest questions
 function getWeeklyQuestions(){
 	xhrWeeklyQuestions = new XMLHttpRequest();
-	var url = "http://developer.cege.ucl.ac.uk:" + httpPortNumber + "/getLatestQns/" + httpPortNumber; //get url with non-hardcoded port number
+	var url = "http://developer.cege.ucl.ac.uk:" + httpPortNumber + "/getWeeklyQuestions/" + httpPortNumber; //get url with non-hardcoded port number
 	xhrWeeklyQuestions.open("GET", url, true); // send to server
 	xhrWeeklyQuestions.onreadystatechange = processLatestQns;
 	try {
@@ -19,7 +19,7 @@ function getWeeklyQuestions(){
 // AJAX response function
 function processWeeklyQuestions(){
 	if (xhrWeeklyQuestions.readState < 4){
-		console.log('Loading questions createde this week ...');
+		console.log('Loading questions created this week ...');
 	}
 	else if (xhrWeeklyQuestions.readyState === 4) { // 4 = response from server completely loaded
 		if (xhrWeeklyQuestions.status > 199 && xhrWeeklyQuestions.status < 300) {
