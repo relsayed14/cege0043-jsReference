@@ -2,7 +2,7 @@
 var xhrNode; 
 
 // function for AJAX Request
-function callDivNodeJSChange() {
+function callDivNodeJSChangeForGraph() {
 	xhrNode = new XMLHttpRequest();
     var url = "http://developer.cege.ucl.ac.uk: " +httpPortNumber;
     xhrNode.open("GET", url, true);
@@ -17,15 +17,15 @@ function callDivNodeJSChange() {
 }
 
 // function for AJAX Response
-function processDivNodeJSChange() {
+function processDivNodeJSChangeForGraph() {
 	// while waiting for response from server
 	if (xhrNode.readyState < 4) {
-		document.getElementById('ajaxtest').innerHTML = "Loading...";
+		document.getElementById('participationGraph').innerHTML = "Loading...";
 	} else if (xhrNode.readyState === 4) {	// 4 = response from server has been completely loaded
 
        if (xhrNode.status > 199 && xhr.status < 300)  {
 		// http status between 200 to 299 are all successful
-		document.getElementById('ajaxtest').innerHTML = xhrNode.responseText;
+		document.getElementById('participationGraph').innerHTML = xhrNode.responseText;
        }
     }
 }
