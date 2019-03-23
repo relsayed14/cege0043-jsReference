@@ -4,26 +4,28 @@ var weeklyQuestionsLayer; // global variable to hold latest quiz points layers f
 // AJAX request function to load latest questions
 function getWeeklyQuestions(){
 	xhrWeeklyQuestions = new XMLHttpRequest();
-	var url = "http://developer.cege.ucl.ac.uk:" + httpPortNumber + "/getWeeklyQuestions/" + httpPortNumber; //get url with non-hardcoded port number
+	var url = "http://developer.cege.ucl.ac.uk:" + httpPortNumber + "/getWeeklyQuestions"; //get url with non-hardcoded port number
 	xhrWeeklyQuestions.open("GET", url, true); // send to server
-	xhrWeeklyQuestions.onreadystatechange = processLatestQns;
+	xhrWeeklyQuestions.onreadystatechange = processWeeklyQuestions;
 	try {
-		xhrLatestQns.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		xhrWeeklyQuestions.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 	}
 	catch (e) {
 		// this only works in internet explorer
 	}
-	xhrLatestQns.send();
+	xhrWeeklyQuestions.send();
 }
+
+var weeklyQuestions = null;
 
 // AJAX response function
 function processWeeklyQuestions(){
-	if (xhrWeeklyQuestions.readState < 4){
+	if (xhrWeeklyQuestions.readyState < 4){
 		console.log('Loading questions created this week ...');
 	}
 	else if (xhrWeeklyQuestions.readyState === 4) { // 4 = response from server completely loaded
 		if (xhrWeeklyQuestions.status > 199 && xhrWeeklyQuestions.status < 300) {
-			var weeklyQuestions = xhrWeeklyQuestions.responseText;
+			weeklyQuestions = xhrWeeklyQuestions.responseText;
 			loadWeeklyQuestionsLayer(weeklyQuestions);
 		}
 	}
@@ -43,16 +45,16 @@ function loadWeeklyQuestionsLayer (weeklyQuestions){
 			// in this case, build an HTML DIV string using values in the data
 			var weeklyQuestString = "<DIV id='weeklyQuizPopup'" + feature.properties.id + "><h5>" + feature.properties.question_title + "</h5>";
 			weeklyQuestString = weeklyQuestString + "<p>" + feature.properties.question_text + "</p>";
-			weeklyQuestString = weeklyQuestString + "1." + feature.properties.answer_1 + "<br>";
+			weeklyQuestString = weeklyQuestString + "1. " + feature.properties.answer_1 + "<br>";
 			weeklyQuestString = weeklyQuestString + "2. " + feature.properties.answer_2 + "<br>";
 			weeklyQuestString = weeklyQuestString + "3. " + feature.properties.answer_3 + "<br>";
 			weeklyQuestString = weeklyQuestString + "4. " + feature.properties.answer_3 + "<br>";
 			
 			// add the answer as a hidden div
     		// code adopted from https://stackoverflow.com/questions/1992114/how-do-you-create-a-hidden-div-that-doesnt-create-a-line-break-or-horizontal-sp
-			weeklyQuestString = weeklyQuestString + "<div id=answer" + feature.properties.id + " hidden>" + feature.properties.correct_answer + "</div> + </div>";
+			weeklyQuestString = weeklyQuestString + "<div id=answer" + feature.properties.id + " hidden>" + feature.properties.correct_answer + "</div> </div>";
 	
-			markers[feature.properties.id] = L.marker(latlng, {icon: yellowMarker }).bindPopup(popupQuestString);
+			markers[feature.properties.id] = L.marker(latlng, {icon: purpleMarker }).bindPopup(weeklyQuestString);
     		return markers[feature.properties.id];
 			}					
 	}).addTo(mymap);
@@ -63,9 +65,9 @@ function loadWeeklyQuestionsLayer (weeklyQuestions){
 
 
 // create custom yellow marker
-var yellowMarker = L.AwesomeMarkers.icon({
+var purpleMarker = L.AwesomeMarkers.icon({
     icon: 'play',
-    markerColor: 'yellow'
+    markerColor: 'purple'
 });
 
 function removeWeeklyQuestions(){
