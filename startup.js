@@ -12,8 +12,9 @@ function startup() {
 
 function questionStartup() {
 	alert("Welcome to the Questions App!");
+	getPort(); // obtain port number 
 	document.addEventListener('DOMContentLoaded', function() {
-		getPort(); // obtain port number 
+		
 		loadW3HTML(); // add HTML functionality
 	},false);
 }

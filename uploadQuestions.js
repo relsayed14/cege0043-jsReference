@@ -1,8 +1,15 @@
+// global variable to hold the request
+var client;
+
+var postString;
+
 // uploading the answers
 function uploadQuestion() {
 	// extract question title
+	try {
+
 	var question_title = document.getElementById("question_title").value;
-	var postString = "question_title=" + question_title;
+	postString = "question_title=" + question_title;
 
 	// extract question text
 	var question_text = document.getElementById("question_text").value;
@@ -22,8 +29,7 @@ function uploadQuestion() {
 	postString = postString + "&answer_4=" + answer_4;
 
 	// check if any of the above fields has not been entered (in case the browser does not work with 'required')
-	if(question_title.trim() == "" || question_text.trim() ==  "" || answer_1.trim() "" ||  
-		answer_2.trim() ==  "" || answer_3.trim() ==  "" || answer_4.trim() ==  "") {
+	if(question_title.trim() == "" || question_text.trim() ==  "" || answer_1.trim() == "" ||  answer_2.trim() ==  "" || answer_3.trim() ==  "" || answer_4.trim() ==  "") {
 		return;
 	}
 
@@ -43,36 +49,38 @@ function uploadQuestion() {
 	console.log("PNT", pointLat + " " + pointLng);
 	postString = postString + "&latitude=" + pointLat + "&longitude=" + pointLng;
 
-	esmInput.trim()!= "";
 
 	// close the popup automatically
 	mymap.closePopup();
-	processData(postString);
+	processQuestion(postString);
+}
+	// code adopted from https://www.w3schools.com/js/js_errors.asp
+	catch (err) {
+		alert(err);
+	}
 
 }
 
-// global variable to hold the request
-var client;
 
 //function to make a request
-function processData(postString) {
+function processQuestion(postString) {
 	client = new XMLHttpRequest();
 	postString = postString + "&port_id=" + httpPortNumber;
 	var url = 'http://developer.cege.ucl.ac.uk:' + httpPortNumber + "/uploadQuestion";
 	client.open('POST', url, true);
 	//notify the server of the data type
 	client.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	client.onreadystatechange = dataUploaded;
+	client.onreadystatechange = questionUploaded;
 	client.send(postString);
 }
 
 //create the code to wait for the response from the data server
 //and process the response once received
-function dataUploaded() {
+function questionUploaded() {
 	//this function listens out for the server to say that the data is ready - i.e. has state 4
 	if (client.readyState == 4) {
 		// change the DIV to show the response
 		alert(client.responseText);
-		loadQuizPoints(false);
+		loadQuestionPoints();
 	}
 }
