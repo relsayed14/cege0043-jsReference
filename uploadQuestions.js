@@ -21,26 +21,30 @@ function uploadQuestion() {
 	var answer_4 = document.getElementById("answer_4").value;
 	postString = postString + "&answer_4=" + answer_4;
 
+	// check if any of the above fields has not been entered (in case the browser does not work with 'required')
+	if(question_title.trim() == "" || question_text.trim() ==  "" || answer_1.trim() "" ||  
+		answer_2.trim() ==  "" || answer_3.trim() ==  "" || answer_4.trim() ==  "") {
+		return;
+	}
+
 	// extract correct answer
 	var correct_answer = document.getElementById("correct_answer").value;
 	// to validate the input for the correct choice - must be either 1,2,3 or 4
 	if (correct_answer != '1' && correct_answer != '2' && correct_answer != '3' && correct_answer != '4') {
 		alert("Invalid choice number, Please enter a number between 1 and 4.");
+		return;
 	}
 	postString = postString + "&correct_answer=" + correct_answer;
 
-
-	// var userLat = sessionStorage.getItem("devLat");
-	// var userLng = sessionStorage.getItem("devLng");
 	var pointLat = sessionStorage.getItem("quizPointLat");
 	var pointLng = sessionStorage.getItem("quizPointLng");
 
 
-	// console.log("DEV", devLat + " " + devLng);
 	console.log("PNT", pointLat + " " + pointLng);
 	postString = postString + "&latitude=" + pointLat + "&longitude=" + pointLng;
 
-	alert (postString);
+	esmInput.trim()!= "";
+
 	// close the popup automatically
 	mymap.closePopup();
 	processData(postString);
