@@ -37,10 +37,3 @@ function quizStartup() {
 	 }, 2000); // to make sure that the port number is obtained before loading the quiz points
 
 }
-
-// when user requests to load the participation graph in Questions App
-function participationGraphStartup() {
-	document.addEventListener('DOMContentLoaded', function() {
-		getPortForParticipation();
-	}, false);
-}
