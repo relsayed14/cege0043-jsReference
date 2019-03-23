@@ -24,16 +24,16 @@ function processWeeklyQuestions(){
 	else if (xhrWeeklyQuestions.readyState === 4) { // 4 = response from server completely loaded
 		if (xhrWeeklyQuestions.status > 199 && xhrWeeklyQuestions.status < 300) {
 			var weeklyQuestions = xhrWeeklyQuestions.responseText;
-			loadLatestQnsLayer(weeklyQuestions);
+			loadWeeklyQuestionsLayer(weeklyQuestions);
 		}
 	}
 }
 
 // convert the received quiz points (which is text) into JSON format and add it to the map
-function loadLatestQnsLayer(weeklyQuestions){
+function loadWeeklyQuestionsLayer (weeklyQuestions){
 	// convert text to JSON
 	var weeklyQuestionsJSON = JSON.parse(weeklyQuestions);
-	alert("Adding all the questions added in the last week by any user");
+	alert("Adding all the questions added in the last week by all users.");
 			
 	// load geoJSON quiz points layer using custom markers
 	weeklyQuestionsLayer = L.geoJSON(weeklyQuestionsJSON,
@@ -68,4 +68,8 @@ var yellowMarker = L.AwesomeMarkers.icon({
     markerColor: 'yellow'
 });
 
+function removeWeeklyQuestions(){
+	alert("Removing all the questions added in the last week by all users.");
+	mymap.removeLayer(weeklyQuestionsLayer);
+}
 
