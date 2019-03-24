@@ -2,7 +2,9 @@
 var client; 
 var quizPointsJSON; 
 var quizPointsJSONAllUsers; 
-
+var user_position = null;
+// globl variable to process AJAX request
+var clientQuiz; 
 
 var markers = {}; // array to hold the markers currently on the map
 
@@ -28,6 +30,8 @@ function loadQuizPoints(showAnswer){
 	client.send();
 }
 
+var quizPoints; 
+
 ////////////////////////////////////////////////////////////////////////////////////////
 // AJAX response function to process the quiz points
 function processQuizPoints(){
@@ -38,7 +42,7 @@ function processQuizPoints(){
 	else if (client.readyState == 4) { 
 		// if successful
 		if (client.status > 199 && client.status < 300) {
-			var quizPoints = client.responseText;
+			quizPoints = client.responseText;
 			console.log(quizPoints);
 
 			if(showAnswers){
@@ -82,9 +86,6 @@ function loadQuizLayer(quizPoints){
 	// convert from text xformat to JSON
 	quizPointsJSON = JSON.parse(quizPoints);
 
-	console.log("Test", quizPointsJSON);
-
-	console.log('now in loadQuizLayer');
 	// load geoJSON quiz points layer using custom markers
 	quizlayer = L.geoJSON(quizPointsJSON,
 	{
@@ -141,16 +142,7 @@ function loadQuizLayer(quizPoints){
 		if (correct){
 			correctAnswers++;
 		}
-			// display correct answer if user had already answered the question
-			/* if(answered_previously){
-				popupQuizString = popupQuizString + "<p> Your Answer: "  + answered_previously.answer_selected + " ||  ";
-				popupQuizString = popupQuizString + "Correct Choice: "  + answered_previously.correct_answer  +  "</p>";
-				if(answered_previously.correct_answer != answered_previously.answer_selected){
-				
-				}else{
-
-				}
-			} */
+		
 			if(!correct){
 				markers[feature.properties.id] = L.marker(latlng, {icon: (correct?greenMarker:blackMarker) }).bindPopup(popupQuizString);
 			}else{
@@ -171,8 +163,6 @@ function loadQuizLayer(quizPoints){
 		popupQuizString = popupQuizString + "<input type='radio' name='answers' id='" + feature.properties.id + " 3'/>" + feature.properties.answer_3 + "<br>";
 		popupQuizString = popupQuizString + "<input type='radio' name='answers' id='" + feature.properties.id + " 4'/>" + feature.properties.answer_4 + "<br><br />";
 		popupQuizString = popupQuizString + "<button onclick='compareAnswer(" + feature.properties.id + "); return false;'> Submit Answer </button>";
-
-			// popupQuizString = popupQuizString + "<button onclick='compareAnswer(" + feature.properties.id + "); return false;'> Submit Answer</button>";
 			
 			// add the answer as a hidden div
 			// code adopted from https://stackoverflow.com/questions/1992114/how-do-you-create-a-hidden-div-that-doesnt-create-a-line-break-or-horizontal-sp
@@ -256,8 +246,7 @@ var blackMarker = L.AwesomeMarkers.icon({
 	markerColor: 'black'
 });
 
-// globl variable to process AJAX request
-var clientQuiz; 
+
 
 // upload user answers to the database
 function uploadAnswer(postString) {
@@ -313,7 +302,7 @@ function processQuizPointsAllUsers(){
 	else if (client.readyState == 4) { 
 		// if successful
 		if (client.status > 199 && client.status < 300) {
-			var quizPoints = client.responseText;
+			quizPoints = client.responseText;
 			console.log(quizPoints);
 			loadQuizLayerAllUsers(quizPoints);
 			
@@ -325,9 +314,12 @@ function processQuizPointsAllUsers(){
 function loadQuizLayerAllUsers(quizPoints){
 	// convert from text xformat to JSON
 	quizPointsJSONAllUsers = JSON.parse(quizPoints);
-	getDistanceFromMultiplePointsAllUsers(user_position);
 
-	console.log('now in loadQuizLayer');
+	if(user_position) {
+			getDistanceFromMultiplePointsAllUsers(user_position);
+	}
+
+	console.log('now in loadQuizLayer all users');
 	// load geoJSON quiz points layer using custom markers
 	quizLayerAllUsers = L.geoJSON(quizPointsJSONAllUsers,
 	{

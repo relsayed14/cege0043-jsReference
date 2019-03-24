@@ -47,12 +47,5 @@ function checkRepeatQuestion(question_id){
 
 
 
-//To check number of correct answers
-//loop -> if(allAnswers[i].port_id == httpPortNumber && allAnswers[i].correct_answer == allAnswers[i].answer_selected) -> count++
-
-// userRanking[port_id] = count
-
-
-
 
 

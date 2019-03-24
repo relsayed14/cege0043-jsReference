@@ -20,8 +20,8 @@ function questionStartup() {
 }
 
 function quizStartup() {
+	alert("Welcome to the Quiz App!");
 	getPort(); // obtain port number 
-	loadW3HTML(); // add HTML functionality
 	setTimeout(function(){ 
 			getAllAnswers(function (){
 				// function to execute after getAllAnswers has been executed

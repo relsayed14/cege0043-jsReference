@@ -45,6 +45,8 @@ function calculateQuestionDifficulty(){
 }
 
 
+// code adopted from https://stackoverflow.com/questions/5467129/sort-javascript-object-by-key
+
 function calculateTopFiveUsers(){
 	var ranking = [];
 	for(var i = 0 ; i < allAnswers.length ; i++){

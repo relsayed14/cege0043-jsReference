@@ -3,14 +3,10 @@ var firstLoad = true;
 var openQuiz = null; // to mark the current quiz the user has open 
 var user_position = null;
 
-// keep device location in this variable
-// var userLocation = null;
-
 // code to check if location settings are on
 function trackLocation() {
 	console.log(navigator.geolocation);
 	if(navigator.geolocation) {
-		 getDistanceFromMultiplePoints({coords:{latitude:51.6095209,longitude:-0.200509}});
 		navigator.geolocation.watchPosition(getDistanceFromMultiplePoints);
 	} else {
 		alert("Geolocation is not supported by this browser. Please change your settings and try again.");
@@ -20,13 +16,9 @@ function trackLocation() {
 
 // function to get distance from several points on the layer
 function getDistanceFromMultiplePoints(position) {
-	user_position = position;
 
 	var minDistance = 1000000; 
 	var closestQuiz = null;
-
-	//console.log(quizPointsJSON);
-	//alert("Here1" + quizPointsJSON[0].features.length);
 
 	for (var i = 0; i < quizPointsJSON[0].features.length; i++) { 
 		var obj = quizPointsJSON[0].features[i];
@@ -45,10 +37,15 @@ function getDistanceFromMultiplePoints(position) {
 	}
 }
 
+
 function getDistanceFromMultiplePointsAllUsers(position) {
 	var minDistance = 1000000; 
 	var closestQuiz = null;
 	var closest5=[];
+
+	user_position = position;
+
+	alert(user_position);
 
 	var points = quizPointsJSONAllUsers[0].features;
 	//console.log(quizPointsJSON);
@@ -60,8 +57,6 @@ function getDistanceFromMultiplePointsAllUsers(position) {
 			position.coords.longitude,b.geometry.coordinates[1], b.geometry.coordinates[0], 'K');
 	})
 
-
-	
 
 	quizPointsJSONAllUsers[0].features = points.slice(0,5);
 }
