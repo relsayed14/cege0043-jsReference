@@ -45,11 +45,9 @@ function getDistanceFromMultiplePointsAllUsers(position) {
 
 	user_position = position;
 
-	alert(user_position);
 
 	var points = quizPointsJSONAllUsers[0].features;
-	//console.log(quizPointsJSON);
-	//alert("Here1" + quizPointsJSON[0].features.length);
+
 	points.sort(function(a,b){
 		return calculateDistance(position.coords.latitude,
 			position.coords.longitude,a.geometry.coordinates[1], a.geometry.coordinates[0], 'K')-

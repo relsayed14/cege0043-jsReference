@@ -20,30 +20,6 @@ function calculateUserRanking(){
 	return userRanking.indexOf(""+httpPortNumber)+1;
 }
 
-function calculateQuestionDifficulty(){
-	var difficulty = [];
-	console.log(difficuly);
-	for(var i = 0 ; i < allAnswers.length ; i++){
-		let question = allAnswers[i].question_id;
-		let isCorrect = allAnswers[i].answer_selected == allAnswers[i].correct_answer;
-		// if no record for user in array, create a new one with value 0
-		if (!difficulty[""+question])
-		{
-			difficulty[""+question] = 0;
-		}
-		// if answer is correct, add 1 
-		if (isCorrect){		
-			difficulty[""+question] = difficulty[""+question] + 1;
-		}
-	}
-	questionDifficulty = getSortedKeys(difficulty);
-	
-
-	// slice: returns subarray from index 0 to index 4
-	// code adopted from https://www.w3schools.com/jsref/jsref_slice_array.asp
-	return questionDifficulty.slice(0, 5);
-}
-
 
 // code adopted from https://stackoverflow.com/questions/5467129/sort-javascript-object-by-key
 
